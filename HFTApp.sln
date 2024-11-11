@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorUI", "BlazorUI\Blazor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorUI.Client", "BlazorUI\BlazorUI.Client\BlazorUI.Client.csproj", "{AE73FD92-610B-4E58-9114-248B96058A0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HFTLibrary", "HFTLibrary\HFTLibrary.csproj", "{903AFCFA-6A37-459C-A66B-015663AB0AEE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AE73FD92-610B-4E58-9114-248B96058A0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE73FD92-610B-4E58-9114-248B96058A0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE73FD92-610B-4E58-9114-248B96058A0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{903AFCFA-6A37-459C-A66B-015663AB0AEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{903AFCFA-6A37-459C-A66B-015663AB0AEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{903AFCFA-6A37-459C-A66B-015663AB0AEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{903AFCFA-6A37-459C-A66B-015663AB0AEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
