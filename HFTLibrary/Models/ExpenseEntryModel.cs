@@ -2,5 +2,5 @@
 
 public class ExpenseEntryModel
 {
-
+    // TODO: implement ExpenseEntryModel
 }

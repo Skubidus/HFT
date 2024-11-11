@@ -2,5 +2,5 @@
 
 public class IncomeEntryModel
 {
-
+    // TODO: implement IncomeEntryModel
 }
