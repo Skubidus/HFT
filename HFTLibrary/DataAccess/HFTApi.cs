@@ -1,8 +1,8 @@
 ﻿using HFTLibrary.Models;
 
-namespace HFTLibrary.Data.TestData;
+namespace HFTLibrary.DataAccess;
 
-public class TestData
+public class HFTApi
 {
     #region FinancialPlanModel
     public List<(int Id, string Name)> GetFinancialPlanList()
