@@ -81,18 +81,112 @@ public class TestData
         throw new NotImplementedException();
     }
 
-    public void CreateExpenseEntry(ExpenseEntryModel expenseEntry)
+    public void CreateExpenseEntry(ExpenseEntryModel entry)
     {
+        // TODO: implement CreateExpenseEntry()
+        throw new NotImplementedException();
+    }
+
+    public void UpdateExpenseEntry(ExpenseEntryModel entry)
+    {
+        // TODO: implement UpdateExpenseEntry()
+        throw new NotImplementedException();
+    }
+
+    public void DeleteExpenseEntry(int id)
+    {
+        // TODO: implement DeleteExpenseEntry()
         throw new NotImplementedException();
     }
     #endregion
 
     #region IncomeEntryModel
+    public List<IncomeEntryModel> GetAllIncomeEntries()
+    {
+        // TODO: implement GetAllIncomeEntries()
+        throw new NotImplementedException();
+    }
+
+    public IncomeEntryModel? GetIncomeEntry(int id)
+    {
+        // TODO: implement GetIncomeEntry()
+        throw new NotImplementedException();
+    }
+
+    public void CreateIncomeEntry(IncomeEntryModel entry)
+    {
+        // TODO: implement CreateIncomeEntry()
+        throw new NotImplementedException();
+    }
+
+    public void UpdateIncomeEntry(IncomeEntryModel entry)
+    {
+        // TODO: implement UpdateIncomeEntry()
+        throw new NotImplementedException();
+    }
+
+    public void DeleteIncomeEntry(int id)
+    {
+        // TODO: implement DeleteIncomeEntry()
+        throw new NotImplementedException();
+    }
     #endregion
 
     #region SavingsPlanModel
+    public SavingsPlanModel? GetSavingsPlan(int id)
+    {
+        // TODO: implement GetSavingsPlan()
+        throw new NotImplementedException();
+    }
+
+    public void CreateSavingsPlan(SavingsPlanModel plan)
+    {
+        // TODO: implement CreateSavingsPlan()
+        throw new NotImplementedException();
+    }
+
+    public void UpdateSavingsPlan(SavingsPlanModel plan)
+    {
+        // TODO: implement UpdateSavingsPlan()
+        throw new NotImplementedException();
+    }
+
+    public void DeleteSavingsPlan(int id)
+    {
+        // TODO: implement DeleteSavingsPlan()
+        throw new NotImplementedException();
+    }
     #endregion
 
     #region SavingsEntryModel
+    public List<SavingsEntryModel> GetAllSavingsEntries()
+    {
+        // TODO: implement GetAllSavingsEntries()
+        throw new NotImplementedException();
+    }
+
+    public SavingsEntryModel? GetSavingsEntry(int id)
+    {
+        // TODO: implement GetSavingsEntry()
+        throw new NotImplementedException();
+    }
+
+    public void CreateSavingsEntry(SavingsEntryModel entry)
+    {
+        // TODO: implement CreateSavingsEntry()
+        throw new NotImplementedException();
+    }
+
+    public void UpdateSavingsEntry(SavingsEntryModel entry)
+    {
+        // TODO: implement UpdateSavingsEntry()
+        throw new NotImplementedException();
+    }
+
+    public void DeleteSavingsEntry(int id)
+    {
+        // TODO: implement DeleteSavingsEntry()
+        throw new NotImplementedException();
+    }
     #endregion
 }
