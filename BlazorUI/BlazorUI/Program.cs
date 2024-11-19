@@ -1,12 +1,18 @@
 using BlazorUI.Client.Pages;
 using BlazorUI.Components;
 
+using HFTLibrary.Data;
+using HFTLibrary.DBContexts;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddScoped<EFCoreContext>();
+builder.Services.AddScoped<IEFCoreData, EFCoreData>();
 
 var app = builder.Build();
 

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35219.272
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorUI", "BlazorUI\BlazorUI\BlazorUI.csproj", "{ADAD2271-7AA4-4295-9806-3EC101F6BE7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorUI", "BlazorUI\BlazorUI\BlazorUI.csproj", "{ADAD2271-7AA4-4295-9806-3EC101F6BE7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorUI.Client", "BlazorUI\BlazorUI.Client\BlazorUI.Client.csproj", "{AE73FD92-610B-4E58-9114-248B96058A0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorUI.Client", "BlazorUI\BlazorUI.Client\BlazorUI.Client.csproj", "{AE73FD92-610B-4E58-9114-248B96058A0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HFTLibrary", "HFTLibrary\HFTLibrary.csproj", "{903AFCFA-6A37-459C-A66B-015663AB0AEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HFTLibrary", "HFTLibrary\HFTLibrary.csproj", "{903AFCFA-6A37-459C-A66B-015663AB0AEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

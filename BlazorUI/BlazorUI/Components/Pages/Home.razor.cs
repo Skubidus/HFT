@@ -1,4 +1,4 @@
-using HFTLibrary.DataAccess;
+using HFTLibrary.Data;
 using HFTLibrary.Models;
 
 namespace BlazorUI.Components.Pages

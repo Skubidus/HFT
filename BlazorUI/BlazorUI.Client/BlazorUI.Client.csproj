@@ -16,4 +16,10 @@
     <ProjectReference Include="..\..\HFTLibrary\HFTLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\DataTest.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>

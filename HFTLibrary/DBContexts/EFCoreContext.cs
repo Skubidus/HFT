@@ -2,9 +2,9 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace HFTLibrary.Data;
+namespace HFTLibrary.DBContexts;
 
-public class HFTContext : DbContext
+public class EFCoreContext : DbContext
 {
     public string DbPath { get; }
 
@@ -15,10 +15,10 @@ public class HFTContext : DbContext
     public DbSet<SavingsEntryModel> SavingsEntries { get; set; }
     public DbSet<SavingsPlanModel> SavingsPlans { get; set; }
 
-    public HFTContext()
+    public EFCoreContext()
     {
         var folder = @"C:\Temp\DB\";
-        DbPath = System.IO.Path.Join(folder, "HFTApp.db");
+        DbPath = Path.Join(folder, "HFTApp.db");
     }
 
     //public HFTContext(DbContextOptions<HFTContext> options) : base(options)

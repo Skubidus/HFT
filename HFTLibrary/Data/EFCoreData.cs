@@ -1,26 +1,38 @@
-﻿using HFTLibrary.Models;
+﻿using HFTLibrary.DBContexts;
+using HFTLibrary.Models;
 
-namespace HFTLibrary.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
-public class HFTApi
+using System.Runtime.CompilerServices;
+
+namespace HFTLibrary.Data;
+
+public class EFCoreData : IEFCoreData
 {
+    private readonly EFCoreContext _db;
+
+    public EFCoreData(EFCoreContext db)
+    {
+        _db = db ?? throw new ArgumentNullException(nameof(db));
+    }
+
     #region FinancialPlanModel
-    public List<(int Id, string Name)> GetFinancialPlanList()
+    public async Task<List<(int Id, string Name)>> GetFinancialPlanListAsync()
     {
-        // TODO: implement GetFinancialPlanList()
-        throw new NotImplementedException();
+        var query = _db.FinancialPlans.Select(x => new { x.Id, x.Name });
+        var resultList = await query.ToListAsync();
+        return resultList.Select(x => (x.Id, x.Name)).ToList();
     }
 
-    public FinancialPlanModel? GetFinancialPlan(int id)
+    public async Task<FinancialPlanModel?> GetFinancialPlanAsync(int id)
     {
-        // TODO: implement GetFinancialPlan()
-        throw new NotImplementedException();
+        return await _db.FinancialPlans.SingleOrDefaultAsync(x => x.Id == id);
     }
 
-    public void CreateFinancialPlan(FinancialPlanModel plan)
+    public async Task CreateFinancialPlanAsync(FinancialPlanModel plan)
     {
-        // TODO: implement CreateFinancialPlan()
-        throw new NotImplementedException();
+        _ = _db.FinancialPlans.Add(plan);
+        _ = await _db.SaveChangesAsync();
     }
 
     public void UpdateFinancialPlan(FinancialPlanModel plan)

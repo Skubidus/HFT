@@ -1,6 +1,6 @@
 ﻿using HFTLibrary.Models;
 
-namespace HFTLibrary.DataAccess;
+namespace HFTLibrary.Data;
 public class TestData
 {
     public List<FinancialPlanModel> FinancialPlans { get; } = [];
@@ -139,7 +139,7 @@ public class TestData
             DateCreated = new DateTime(2022, 11, 2),
             DateModified = new DateTime(2022, 11, 2)
         };
-        
+
         var plan1 = new FinancialPlanModel
         {
             Id = 1,

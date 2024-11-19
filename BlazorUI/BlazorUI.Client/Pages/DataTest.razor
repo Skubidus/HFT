@@ -1,0 +1,41 @@
+﻿@page "/DataTest"
+@using HFTLibrary.Data
+@using HFTLibrary.Models
+@inject IEFCoreData _db;
+
+<PageTitle>DataTest</PageTitle>
+
+<h3>DataTest</h3>
+
+
+<div class="text-center mt-3 mb-3">
+    <button @onclick="GetData" class="btn-danger w-25">DB Query Test</button>
+</div>
+
+
+@if (data is not null)
+{
+    <ul>
+        @foreach (var item in data)
+        {
+            <li>@item.id: @item.name</li>
+        }
+    </ul>
+}
+else
+{
+    <span>Keine Daten da, Noob! KEK</span>
+}
+
+@code
+{
+    private List<(int id, string name)>? data;
+
+    private async Task GetData()
+    {
+        data = await _db.GetFinancialPlanListAsync();
+        // data = [];
+        // data.Add((1, "testomio"));
+        StateHasChanged();
+    }
+}
