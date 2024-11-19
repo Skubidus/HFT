@@ -1,7 +1,268 @@
 ﻿@page "/"
+@using HFTLibrary.DataAccess
+@using HFTLibrary.Models
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Finanzpläne</h1>
 
-Welcome to your new app.
+<div class="mb-2">Hier finden Sie eine Übersicht aller gespeicherten Finanzpläne:</div>
+
+@if (_financialPlans.Count == 0)
+{
+    <span class="alert-info fw-bold fs-4">Es sind keine Finanzpläne verfügbar!</span>
+}
+else
+{
+    @foreach (var plan in _financialPlans)
+    {
+        <div class="border mb-5 p-2 pt-0 pb-0">
+            <div class="bg-info">
+                &nbsp;
+            </div>
+
+            <div class="text-center mt-3">
+                <span class="w-100 fs-5 text-decoration-underline fw-bold">Finanzplan:</span>
+            </div>
+
+            <table class="border-top border-bottom">
+                <thead>
+                    <tr>
+                        <th class="col-md-1">Name:</th>
+                        <th class="col-md-5">@plan.Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-md-1">ID:</td>
+                        <td class="col-md-5">@plan.Id</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Beschreibung:</td>
+                        <td class="col-md-5">@plan.Description</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Erstellt am:</td>
+                        <td class="col-md-5">@plan.DateCreated</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Zuletzt bearbeitet:</td>
+                        <td class="col-md-5">@plan.DateModified</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="text-center mt-3">
+                <span class="w-100 fs-5 text-decoration-underline fw-bold">Sparplan:</span>
+            </div>
+
+            <table class="border-top border-bottom">
+                <thead>
+                    <tr>
+                        <th class="col-md-1">Name:</th>
+                        <th class="col-md-5">@plan.SavingsPlan?.Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-md-1">ID:</td>
+                        <td class="col-md-5">@plan.SavingsPlan?.Id</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Beschreibung:</td>
+                        <td class="col-md-5">@plan.SavingsPlan?.Description</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Erstellt am:</td>
+                        <td class="col-md-5">@plan.SavingsPlan?.DateCreated</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Zuletzt bearbeitet:</td>
+                        <td class="col-md-5">@plan.SavingsPlan?.DateModified</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Gesamter Betrag:</td>
+                        <td class="col-md-5">@plan.SavingsPlan?.SavingsTotal €</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Anlagedauer:</td>
+                        <td class="col-md-5">@plan.SavingsPlan?.DurationInMonths Monate</td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-1">Mtl. Abschlag:</td>
+                        <td class="col-md-5">@plan.SavingsPlan?.SavingsRatePerMonth €</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            @if (plan.SavingsPlan is not null)
+            {
+                <div class="text-center mt-3">
+                    <span class="w-100 fs-5 text-decoration-underline fw-bold">Sparplan-Einträge:</span>
+                </div>
+
+                @foreach (var entry in plan.SavingsPlan.SavingsEntries)
+                {
+                    <table class="border-top border-bottom">
+                        <thead>
+                            <tr>
+                                <th class="col-md-1">Name:</th>
+                                <th class="col-md-5">@entry.Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-md-1">ID:</td>
+                                <td class="col-md-5">@entry.Id</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Beschreibung:</td>
+                                <td class="col-md-5">@entry.Description</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Preis:</td>
+                                <td class="col-md-5">@entry.Price €</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Erstellt am:</td>
+                                <td class="col-md-5">@entry.DateCreated</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Zuletzt bearbeitet:</td>
+                                <td class="col-md-5">@entry.DateModified</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            }
+
+            @if (plan.BankAccounts is not null)
+            {
+                <div class="text-center mt-3">
+                    <span class="w-100 fs-5 text-decoration-underline fw-bold">Bankkonten:</span>
+                </div>
+
+                @foreach (var account in plan.BankAccounts)
+                {
+                    <table class="border-top border-bottom">
+                        <thead>
+                            <tr>
+                                <th class="col-md-1">Name:</th>
+                                <th class="col-md-5">@account.Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-md-1">ID:</td>
+                                <td class="col-md-5">@account.Id</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Beschreibung:</td>
+                                <td class="col-md-5">@account.Description</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">IBAN:</td>
+                                <td class="col-md-5">@account.IBAN</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">BIC:</td>
+                                <td class="col-md-5">@account.BIC</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Erstellt am:</td>
+                                <td class="col-md-5">@account.DateCreated</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Zuletzt bearbeitet:</td>
+                                <td class="col-md-5">@account.DateModified</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            }
+
+            @if (plan.Incomes is not null)
+            {
+                <div class="text-center mt-3">
+                    <span class="w-100 fs-5 text-decoration-underline fw-bold">Einkommen:</span>
+                </div>
+
+                @foreach (var entry in plan.Incomes)
+                {
+                    <table class="border-top border-bottom">
+                        <thead>
+                            <tr>
+                                <th class="col-md-1">Name:</th>
+                                <th class="col-md-5">@entry.Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-md-1">ID:</td>
+                                <td class="col-md-5">@entry.Id</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Beschreibung:</td>
+                                <td class="col-md-5">@entry.Description</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Betrag:</td>
+                                <td class="col-md-5">@entry.TotalAmount €</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Erstellt am:</td>
+                                <td class="col-md-5">@entry.DateCreated</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Zuletzt bearbeitet:</td>
+                                <td class="col-md-5">@entry.DateModified</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            }
+
+            @if (plan.Expenses is not null)
+            {
+                <div class="text-center mt-3">
+                    <span class="w-100 fs-5 text-decoration-underline fw-bold">Ausgaben:</span>
+                </div>
+
+                @foreach (var entry in plan.Expenses)
+                {
+                    <table class="border-top border-bottom">
+                        <thead>
+                            <tr>
+                                <th class="col-md-1">Name:</th>
+                                <th class="col-md-5">@entry.Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-md-1">ID:</td>
+                                <td class="col-md-5">@entry.Id</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Beschreibung:</td>
+                                <td class="col-md-5">@entry.Description</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Preis:</td>
+                                <td class="col-md-5">@entry.Price €</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Erstellt am:</td>
+                                <td class="col-md-5">@entry.DateCreated</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Zuletzt bearbeitet:</td>
+                                <td class="col-md-5">@entry.DateModified</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            }
+
+        </div>
+    }
+}

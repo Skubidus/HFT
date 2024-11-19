@@ -2,7 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace HFTLibrary.API;
+namespace HFTLibrary.Data;
 
 public class HFTContext : DbContext
 {
@@ -15,11 +15,18 @@ public class HFTContext : DbContext
     public DbSet<SavingsEntryModel> SavingsEntries { get; set; }
     public DbSet<SavingsPlanModel> SavingsPlans { get; set; }
 
-    public HFTContext(DbContextOptions<HFTContext> options) : base(options)
+    public HFTContext()
     {
         var folder = @"C:\Temp\DB\";
         DbPath = System.IO.Path.Join(folder, "HFTApp.db");
     }
+
+    //public HFTContext(DbContextOptions<HFTContext> options) : base(options)
+    //{
+    //    var folder = @"C:\Temp\DB\";
+    //    DbPath = System.IO.Path.Join(folder, "HFTApp.db");
+    //}
+
     protected override void OnConfiguring(DbContextOptionsBuilder options)
       => options.UseSqlite($"Data Source={DbPath}");
 }
