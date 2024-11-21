@@ -1,0 +1,63 @@
+﻿@page "/DataTest"
+@rendermode InteractiveServer
+
+@using HFTLibrary.Data
+@using HFTLibrary.Models
+@inject IEFCoreData _db;
+
+@code
+{
+    private List<(int id, string name)>? data;
+
+    private async Task GetData()
+    {
+        data = await _db.GetShortFinancialPlanListAsync();
+    }
+
+    private async Task SaveData()
+    {
+        var testData = new TestData();
+        var plans = testData.FinancialPlans;
+
+        foreach (var plan in plans)
+        {
+            await _db.CreateFinancialPlanAsync(plan);
+        }
+    }
+
+    private async Task DeleteEntryAsync(int id)
+    {
+        await _db.DeleteFinancialPlanAsync(id);
+        data = await _db.GetShortFinancialPlanListAsync();
+    }
+}
+
+<PageTitle>DataTest</PageTitle>
+
+<h3>DataTest</h3>
+
+<div class="text-center mt-3 mb-3">
+    <button id="test" @onclick="GetData" class="btn-danger w-25">DB Query Test</button>
+</div>
+
+<div class="text-center mt-3 mb-3">
+    <button id="test" @onclick="SaveData" class="btn-danger w-25">Write TestData to DB</button>
+</div>
+
+@if (data is not null)
+{
+    <ul class="border">
+        @foreach (var item in data)
+        {
+            <li>
+                <span class="align-middle">@item.id: @item.name</span>
+                <button @onclick="@(async () => await DeleteEntryAsync(item.id))" class="btn-close align-middle">&nbsp;</button>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <span>Keine Daten da, Noob! KEK</span>
+}
+

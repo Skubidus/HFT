@@ -3,6 +3,7 @@ using BlazorUI.Components;
 
 using HFTLibrary.Data;
 using HFTLibrary.DBContexts;
+using HFTLibrary.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<EFCoreContext>();
 builder.Services.AddScoped<IEFCoreData, EFCoreData>();
+
 
 var app = builder.Build();
 

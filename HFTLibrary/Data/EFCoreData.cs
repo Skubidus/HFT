@@ -2,6 +2,7 @@
 using HFTLibrary.Models;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 using System.Runtime.CompilerServices;
 
@@ -10,18 +11,25 @@ namespace HFTLibrary.Data;
 public class EFCoreData : IEFCoreData
 {
     private readonly EFCoreContext _db;
+    //private readonly ILogger _logger;
 
     public EFCoreData(EFCoreContext db)
     {
         _db = db ?? throw new ArgumentNullException(nameof(db));
+        //_logger = logger;
     }
 
     #region FinancialPlanModel
-    public async Task<List<(int Id, string Name)>> GetFinancialPlanListAsync()
+    public async Task<List<(int Id, string Name)>> GetShortFinancialPlanListAsync()
     {
         var query = _db.FinancialPlans.Select(x => new { x.Id, x.Name });
         var resultList = await query.ToListAsync();
         return resultList.Select(x => (x.Id, x.Name)).ToList();
+    }
+
+    public async Task<List<FinancialPlanModel>> GetFullFinancialPlanListAsync()
+    {
+        return await _db.FinancialPlans.ToListAsync();
     }
 
     public async Task<FinancialPlanModel?> GetFinancialPlanAsync(int id)
@@ -41,10 +49,17 @@ public class EFCoreData : IEFCoreData
         throw new NotImplementedException();
     }
 
-    public void DeleteFinancialPlan(int id)
+    public async Task DeleteFinancialPlanAsync(int id)
     {
-        // TODO: implement DeleteFinancialPlan()
-        throw new NotImplementedException();
+        var plan = _db.FinancialPlans
+            .Include(p => p.SavingsPlan)
+            .Include(p => p.BankAccounts)
+            .Include(p => p.Incomes)
+            .Include(p => p.Expenses)
+            .Single(x => x.Id == id);
+
+        _ = _db.FinancialPlans.Remove(plan);
+        _ = await _db.SaveChangesAsync();
     }
     #endregion
 

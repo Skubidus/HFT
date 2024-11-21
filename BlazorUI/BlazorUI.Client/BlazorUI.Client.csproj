@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -14,12 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\HFTLibrary\HFTLibrary.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="Pages\DataTest.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
   </ItemGroup>
 
 </Project>
