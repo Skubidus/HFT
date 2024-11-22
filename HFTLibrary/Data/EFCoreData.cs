@@ -29,12 +29,22 @@ public class EFCoreData : IEFCoreData
 
     public async Task<List<FinancialPlanModel>> GetFullFinancialPlanListAsync()
     {
-        return await _db.FinancialPlans.ToListAsync();
+        return await _db.FinancialPlans
+            .Include(p => p.SavingsPlan)
+            .Include(p => p.BankAccounts)
+            .Include(p => p.Incomes)
+            .Include(p => p.Expenses)
+            .ToListAsync();
     }
 
     public async Task<FinancialPlanModel?> GetFinancialPlanAsync(int id)
     {
-        return await _db.FinancialPlans.SingleOrDefaultAsync(x => x.Id == id);
+        return await _db.FinancialPlans
+            .Include(p => p.SavingsPlan)
+            .Include(p => p.BankAccounts)
+            .Include(p => p.Incomes)
+            .Include(p => p.Expenses)
+            .SingleOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task CreateFinancialPlanAsync(FinancialPlanModel plan)

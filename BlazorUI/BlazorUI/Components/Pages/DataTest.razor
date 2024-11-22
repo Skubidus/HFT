@@ -1,5 +1,5 @@
 ﻿@page "/DataTest"
-@rendermode InteractiveServer
+@rendermode InteractiveAuto
 
 @using HFTLibrary.Data
 @using HFTLibrary.Models
@@ -9,12 +9,12 @@
 {
     private List<(int id, string name)>? data;
 
-    private async Task GetData()
+    private async Task GetDataAsync()
     {
         data = await _db.GetShortFinancialPlanListAsync();
     }
 
-    private async Task SaveData()
+    private async Task InsertDataAsync()
     {
         var testData = new TestData();
         var plans = testData.FinancialPlans;
@@ -37,11 +37,11 @@
 <h3>DataTest</h3>
 
 <div class="text-center mt-3 mb-3">
-    <button id="test" @onclick="GetData" class="btn-danger w-25">DB Query Test</button>
+    <button id="test" @onclick="@(async () => await GetDataAsync())" class="btn-danger w-25">DB Query Test</button>
 </div>
 
 <div class="text-center mt-3 mb-3">
-    <button id="test" @onclick="SaveData" class="btn-danger w-25">Write TestData to DB</button>
+    <button id="test" @onclick="@(async () => await InsertDataAsync())" class="btn-danger w-25">Write TestData to DB</button>
 </div>
 
 @if (data is not null)
@@ -51,6 +51,7 @@
         {
             <li>
                 <span class="align-middle">@item.id: @item.name</span>
+                <a class="btn-link" href=@($"/Edit/FinancialPlan/{item.id}")>Test</a>
                 <button @onclick="@(async () => await DeleteEntryAsync(item.id))" class="btn-close align-middle">&nbsp;</button>
             </li>
         }
@@ -58,6 +59,6 @@
 }
 else
 {
-    <span>Keine Daten da, Noob! KEK</span>
+    <span>Es sind keine Daten vorhanden.</span>
 }
 
