@@ -103,7 +103,11 @@
 
                             <div class="row my-2">
                                 <div class="col" />
-                                <div class="col-auto btn-close me-2" />
+                                <div class="col-auto">
+                                    @* <NavLink class="nav-link bi bi-trash" href="datatest" title="Bankkonto löschen" /> *@
+                                </div>
+                                <div class="col-auto bi bi-trash" title="Bankkonto löschen" @onclick="HandleSubmit" />
+                                @* </NavLink> *@
                             </div>
 
                             <div class="row my-2">
@@ -165,8 +169,182 @@
                     <hr class="my-4" />
                 </div>
 
+                <div class="card row">
+                    <div class="card-body">
+                        <h5 class="card-title">Einnahmen</h5>
+
+                        @if (_financialPlan.Incomes.Count == 0)
+                        {
+                            <div class="row my-2">
+                                <span class="text-info">Es sind keine Einnahmen vorhanden.</span>
+                            </div>
+                        }
+                        @for (int i = 0; i < _financialPlan.Incomes.Count; i++)
+                        {
+                            var income = _financialPlan.Incomes[i];
+
+                            <div class="row my-2">
+                                <div class="col" />
+                                <div class="col-auto bi bi-trash" title="Einkommen löschen" @onclick="HandleSubmit" />
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>ID:</label>
+                                </div>
+                                <div class="col">
+                                    <span>@income.Id</span>
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Name:</label>
+                                </div>
+                                <div class="col">
+                                    <InputText @bind-Value="@income.Name" class="w-100" />
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Beschreibung:</label>
+                                </div>
+                                <div class="col">
+                                    <InputText @bind-Value="@income.Description" class="w-100" />
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Betrag:</label>
+                                </div>
+                                <div class="col">
+                                    <InputText @bind-Value="@income.TotalAmountString" class="w-100" />
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Erstellt am:</label>
+                                </div>
+                                <div class="col">
+                                    <span>@income.DateCreated.ToShortDateString() - @income.DateCreated.ToLongTimeString() Uhr</span>
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Zuletzt bearbeitet am:</label>
+                                </div>
+                                <div class="col">
+                                    <span>@income.DateModified.ToShortDateString() - @income.DateModified.ToLongTimeString() Uhr</span>
+                                </div>
+                            </div>
+
+                            @if (i < _financialPlan.Incomes.Count - 1)
+                            {
+                                <div>
+                                    <hr class="my-4" />
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <hr class="my-4" />
+                </div>
+
+                <div class="card row">
+                    <div class="card-body">
+                        <h5 class="card-title">Ausgaben</h5>
+
+                        @if (_financialPlan.Expenses.Count == 0)
+                        {
+                            <div class="row my-2">
+                                <span class="text-info">Es sind keine Ausgaben vorhanden.</span>
+                            </div>
+                        }
+                        @for (int i = 0; i < _financialPlan.Expenses.Count; i++)
+                        {
+                            var expense = _financialPlan.Expenses[i];
+
+                            <div class="row my-2">
+                                <div class="col" />
+                                <div class="col-auto bi bi-trash" title="Ausgabe löschen" @onclick="HandleSubmit" />
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>ID:</label>
+                                </div>
+                                <div class="col">
+                                    <span>@expense.Id</span>
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Name:</label>
+                                </div>
+                                <div class="col">
+                                    <InputText @bind-Value="@expense.Name" class="w-100" />
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Beschreibung:</label>
+                                </div>
+                                <div class="col">
+                                    <InputText @bind-Value="@expense.Description" class="w-100" />
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Betrag:</label>
+                                </div>
+                                <div class="col">
+                                    <InputText @bind-Value="@expense.PriceString" class="w-100" />
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Erstellt am:</label>
+                                </div>
+                                <div class="col">
+                                    <span>@expense.DateCreated.ToShortDateString() - @expense.DateCreated.ToLongTimeString() Uhr</span>
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Zuletzt bearbeitet am:</label>
+                                </div>
+                                <div class="col">
+                                    <span>@expense.DateModified.ToShortDateString() - @expense.DateModified.ToLongTimeString() Uhr</span>
+                                </div>
+                            </div>
+
+                            @if (i < _financialPlan.Incomes.Count - 1)
+                            {
+                                <div>
+                                    <hr class="my-4" />
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <hr class="my-4" />
+                </div>
+
                 <div class="row my-2">
-                    <button type="submit" class="col offset-10">Senden</button>
+                    <button type="submit" class="col offset-10">Speichern</button>
                 </div>
 
             </EditForm>
