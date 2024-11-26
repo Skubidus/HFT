@@ -40,6 +40,12 @@ public class EFCoreData : IEFCoreData
     public async Task<FinancialPlanModel?> GetFinancialPlanAsync(int id)
     {
         return await _db.FinancialPlans
+            .SingleOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<FinancialPlanModel?> GetFullFinancialPlanAsync(int id)
+    {
+        return await _db.FinancialPlans
             .Include(p => p.SavingsPlan)
             .Include(p => p.BankAccounts)
             .Include(p => p.Incomes)
@@ -53,10 +59,11 @@ public class EFCoreData : IEFCoreData
         _ = await _db.SaveChangesAsync();
     }
 
-    public void UpdateFinancialPlan(FinancialPlanModel plan)
+    public async Task UpdateFinancialPlanAsync(FinancialPlanModel plan)
     {
-        // TODO: implement UpdateFinancialPlan()
-        throw new NotImplementedException();
+        var originalPlan = _db.FinancialPlans.Single(x => x.Id == plan.Id);
+        originalPlan = plan;
+        _ = await _db.SaveChangesAsync();
     }
 
     public async Task DeleteFinancialPlanAsync(int id)

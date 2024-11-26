@@ -1,0 +1,148 @@
+﻿@page "/FinancialPlanData"
+@page "/FinancialPlanData/{Id:int}"
+@rendermode InteractiveServer
+
+@using HFTLibrary.Data
+@using HFTLibrary.Models
+@using System.Diagnostics
+
+@inject IEFCoreData _db;
+
+<PageTitle>Allgemeine Daten</PageTitle>
+
+<div class="container mb-4">
+    <div class="row">
+        <h3>Financial Plan Data</h3>
+    </div>
+
+
+    @if (Id == 0)
+    {
+        <div class="row">
+            <p class="fs-4 text-danger">Keine ID mit angegeben!</p>
+        </div>
+    }
+    else if (_financialPlan is null)
+    {
+        <div class="row">
+            <p class="fs-4 text-danger">Lade Finanzplan...</p>
+        </div>
+    }
+    else if (_showDeleteConfirmDialog)
+    {
+        <DeleteFinancialPlan FinancialPlan="_financialPlan" OnDialogClosed="HandleDialogClosed" />
+    }
+    else
+    {
+        <div class="row">
+            <EditForm Model="@_financialPlan" OnSubmit="HandleValidSubmitAsync" FormName="FinancialPlanForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="row card">
+                    <div class="card-body">
+                        <h5 class="card-title">Allgemeine Informationen:</h5>
+
+                        <div class="row my-2">
+                            <div class="col" />
+                            <div class="col-auto bi bi-trash" title="Finanzplan löschen" @onclick="HandleDeleteButton" />
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col-4">
+                                <label>ID:</label>
+                            </div>
+                            <div class="col">
+                                <span>@_financialPlan.Id</span>
+                            </div>
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col-4">
+                                <label>Name:</label>
+                            </div>
+                            <div class="col">
+                                <InputText @bind-Value="@_financialPlan.Name" class="w-100" />
+                            </div>
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col-4">
+                                <label>Beschreibung:</label>
+                            </div>
+                            <div class="col">
+                                <InputText @bind-Value="@_financialPlan.Description" class="w-100" />
+                            </div>
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col-4">
+                                <label>Erstellt am:</label>
+                            </div>
+                            <div class="col">
+                                <span>@_financialPlan.DateCreated.ToShortDateString() - @_financialPlan.DateCreated.ToLongTimeString() Uhr</span>
+                            </div>
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col-4">
+                                <label>Zuletzt bearbeitet am:</label>
+                            </div>
+                            <div class="col">
+                                <span>@_financialPlan.DateModified.ToShortDateString() - @_financialPlan.DateModified.ToLongTimeString() Uhr</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <hr class="my-4" />
+                </div>
+
+                <div class="row my-2">
+                    <button type="submit" class="col offset-10">Speichern</button>
+                </div>
+
+            </EditForm>
+        </div>
+    }
+
+</div>
+
+@code {
+    private FinancialPlanModel? _financialPlan = null;
+    private bool _showDeleteConfirmDialog = false;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _financialPlan = await _db.GetFinancialPlanAsync(Id);
+    }
+
+    private async Task HandleValidSubmitAsync()
+    {
+        Debug.WriteLine($"In {nameof(HandleValidSubmitAsync)}()");
+
+        if (_financialPlan is null)
+        {
+            return;
+        }
+
+        _financialPlan.DateModified = DateTime.Now;
+        await _db.UpdateFinancialPlanAsync(_financialPlan);
+    }
+
+    private void HandleDeleteButton()
+    {
+        Debug.WriteLine($"In {nameof(HandleDeleteButton)}()");
+        _showDeleteConfirmDialog = true;
+    }
+
+    private void HandleDialogClosed()
+    {
+        _showDeleteConfirmDialog = false;
+        StateHasChanged();
+    }
+}

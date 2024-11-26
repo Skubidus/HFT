@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HFTLibrary.Models;
 
 public class IncomeEntryModel
 {
     public int Id { get; set; }
+    [StringLength(100, MinimumLength = 5)]
     public required string Name { get; set; }
     public required decimal TotalAmount { get; set; }
     [NotMapped]

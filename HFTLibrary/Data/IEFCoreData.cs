@@ -9,4 +9,6 @@ public interface IEFCoreData
     Task<FinancialPlanModel?> GetFinancialPlanAsync(int id);
     Task CreateFinancialPlanAsync(FinancialPlanModel plan);
     Task DeleteFinancialPlanAsync(int id);
+    Task UpdateFinancialPlanAsync(FinancialPlanModel plan);
+    Task<FinancialPlanModel?> GetFullFinancialPlanAsync(int id);
 }

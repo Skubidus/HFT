@@ -1,0 +1,59 @@
+﻿@using HFTLibrary.Data
+@using HFTLibrary.Models
+
+@inject IEFCoreData _db;
+@inject NavigationManager _nav;
+
+<div class="row card bg-danger">
+    <div class="card-body text-white">
+        <h5 class="card-title">Löschung bestätigen!</h5>
+
+        <div class="row">
+            <div class="col">
+                <label>Möchten Sie den folgenden Finanzplan wirklich vollständig löschen?</label>
+            </div>
+        </div>
+
+        <div class="row bg-info text-black my-2">
+            <label>ID: @FinancialPlan.Id</label>
+            <label>Nane: @FinancialPlan.Name</label>
+            <label>Beschreibung: @FinancialPlan.Description</label>
+        </div>
+
+        <div class="row">
+            <label>ACHTUNG: Auch alle zugehörigen Daten wie Bankkonten und Sparpläne werden endgültig gelöscht!</label>
+        </div>
+
+        <div class="row my-2">
+            <div class="col-2 offset-8">
+                <button class="btn btn-secondary" @onclick="@(() => HandleButtonClickAsync(false))">Abbrechen</button>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary" @onclick="@(() => HandleButtonClickAsync(true))">Löschen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    [Parameter]
+    public required FinancialPlanModel FinancialPlan { get; init; }
+
+    [Parameter]
+    public EventCallback<bool> OnDialogClosed { get; set; }
+
+    private async Task HandleButtonClickAsync(bool doDelete)
+    {
+        await OnDialogClosed.InvokeAsync(true);
+
+        if (doDelete == false)
+        {
+            _nav.NavigateTo($"/FinancialPlanData/{FinancialPlan.Id}");
+            return;
+        }
+
+        await _db.DeleteFinancialPlanAsync(FinancialPlan.Id);
+        _nav.NavigateTo($"/FinancialPlanData");
+    }
+}

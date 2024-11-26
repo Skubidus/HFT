@@ -2,7 +2,7 @@
 @using HFTLibrary.Data
 @using HFTLibrary.Models
 @using System.Diagnostics
-@rendermode InteractiveAuto
+@rendermode InteractiveServer
 
 @inject IEFCoreData _db;
 
@@ -215,12 +215,21 @@
                                 </div>
                             </div>
 
-                            <div class="row my-2">
+          @*                   <div class="row my-2">
                                 <div class="col-4">
                                     <label>Betrag:</label>
                                 </div>
                                 <div class="col">
                                     <InputText @bind-Value="@income.TotalAmountString" class="w-100" />
+                                </div>
+                            </div> *@
+
+                            <div class="row my-2">
+                                <div class="col-4">
+                                    <label>Betrag:</label>
+                                </div>
+                                <div class="col">
+                                    <InputNumber @bind-Value="@income.TotalAmount" class="w-50" />
                                 </div>
                             </div>
 
@@ -363,7 +372,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _financialPlan = await _db.GetFinancialPlanAsync(Id);
+        _financialPlan = await _db.GetFullFinancialPlanAsync(Id);
     }
 
     private void HandleSubmit()

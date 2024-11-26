@@ -1,8 +1,11 @@
-﻿namespace HFTLibrary.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HFTLibrary.Models;
 
 public class FinancialPlanModel
 {
 	public int Id { get; set; }
+    [StringLength(100, MinimumLength = 5)]
 	public required string Name { get; set; }
 	public string Description { get; set; } = string.Empty;
 	public List<IncomeEntryModel> Incomes { get; init; } = [];
