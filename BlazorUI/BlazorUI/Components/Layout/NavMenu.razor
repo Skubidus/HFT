@@ -1,4 +1,8 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using SessionData
+
+@inject SessionData _session;
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">BlazorUI</a>
     </div>
@@ -9,53 +13,66 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="FinancialPlanData">
-                <div>
-                    <i class="bi bi-currency-exchange" aria-hidden="true" /> Allgemeine Daten
-                </div>
-            </NavLink>
-        </div>
+        @if (_session.SelectedFinancialPlanId <= 0)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/">
+                    <div>
+                        <i class="bi bi-currency-exchange" aria-hidden="true" /> Finanzpläne
+                    </div>
+                </NavLink>
+            </div>
+        }
+        else
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="FinancialPlanData">
+                    <div>
+                        <i class="bi bi-currency-exchange" aria-hidden="true" /> Allgemeine Daten
+                    </div>
+                </NavLink>
+            </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="BalanceSheet">
-                <div>
-                    <i class="bi bi-currency-exchange" aria-hidden="true" /> Bilanz
-                </div>
-            </NavLink>
-        </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="BalanceSheet">
+                    <div>
+                        <i class="bi bi-currency-exchange" aria-hidden="true" /> Bilanz
+                    </div>
+                </NavLink>
+            </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Incomes">
-                <div>
-                    <i class="bi bi-currency-exchange" aria-hidden="true" /> Einnahmen
-                </div>
-            </NavLink>
-        </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="Incomes">
+                    <div>
+                        <i class="bi bi-currency-exchange" aria-hidden="true" /> Einnahmen
+                    </div>
+                </NavLink>
+            </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Expenses">
-                <div>
-                    <i class="bi bi-currency-exchange" aria-hidden="true" /> Ausgaben
-                </div>
-            </NavLink>
-        </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="Expenses">
+                    <div>
+                        <i class="bi bi-currency-exchange" aria-hidden="true" /> Ausgaben
+                    </div>
+                </NavLink>
+            </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Savings">
-                <div>
-                    <i class="bi bi-currency-exchange" aria-hidden="true" /> Rücklagen
-                </div>
-            </NavLink>
-        </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="Savings">
+                    <div>
+                        <i class="bi bi-currency-exchange" aria-hidden="true" /> Rücklagen
+                    </div>
+                </NavLink>
+            </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="BankAccounts">
-                <div>
-                    <i class="bi bi-currency-exchange" aria-hidden="true" /> Bankkonten
-                </div>
-            </NavLink>
-        </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="BankAccounts">
+                    <div>
+                        <i class="bi bi-currency-exchange" aria-hidden="true" /> Bankkonten
+                    </div>
+                </NavLink>
+            </div>
+        }
 
     </nav>
 </div>

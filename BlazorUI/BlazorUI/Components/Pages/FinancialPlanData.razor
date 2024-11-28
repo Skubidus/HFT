@@ -1,12 +1,13 @@
 ﻿@page "/FinancialPlanData"
-@page "/FinancialPlanData/{Id:int}"
 @rendermode InteractiveServer
 
 @using HFTLibrary.Data
 @using HFTLibrary.Models
+@using SessionData
 @using System.Diagnostics
 
 @inject IEFCoreData _db;
+@inject SessionData _session;
 
 <PageTitle>Allgemeine Daten</PageTitle>
 
@@ -15,14 +16,7 @@
         <h3>Allgemeine Daten</h3>
     </div>
 
-
-    @if (Id == 0)
-    {
-        <div class="row">
-            <p class="fs-4 text-danger">Keine ID mit angegeben!</p>
-        </div>
-    }
-    else if (_financialPlan is null)
+    @if (_financialPlan is null)
     {
         <div class="row">
             <p class="fs-4 text-danger">Lade Finanzplan...</p>
@@ -30,7 +24,7 @@
     }
     else if (_showDeleteConfirmDialog)
     {
-        <DeleteFinancialPlan FinancialPlan="_financialPlan" OnDialogClosed="HandleDialogClosed" />
+        <DeleteFinancialPlan OnDialogClosed="HandleDialogClosed" />
     }
     else
     {
@@ -107,79 +101,6 @@
 
             </EditForm>
         </div>
-
-        @*         <div class="row">
-            <EditForm Model="@_financialPlan" OnSubmit="HandleValidSubmitAsync" FormName="FinancialPlanForm">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-
-                <div class="row card">
-                    <div class="card-body">
-
-                        <div class="row my-2 justify-content-end">
-                            <div class="col-auto bi bi-trash btn py-2 me-2 text-danger border border-warning" title="Finanzplan löschen" @onclick="HandleDeleteButton" />
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>ID:</label>
-                            </div>
-                            <div class="col">
-                                <span>@_financialPlan.Id</span>
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Name:</label>
-                            </div>
-                            <div class="col">
-                                <InputText @bind-Value="@_financialPlan.Name" class="w-100" />
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Beschreibung:</label>
-                            </div>
-                            <div class="col">
-                                <InputText @bind-Value="@_financialPlan.Description" class="w-100" />
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Erstellt am:</label>
-                            </div>
-                            <div class="col">
-                                <span>@_financialPlan.DateCreated.ToShortDateString() - @_financialPlan.DateCreated.ToLongTimeString() Uhr</span>
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Zuletzt bearbeitet am:</label>
-                            </div>
-                            <div class="col">
-                                <span>@_financialPlan.DateModified.ToShortDateString() - @_financialPlan.DateModified.ToLongTimeString() Uhr</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <hr class="my-4" />
-                </div>
-
-                <div class="row my-2">
-                    <div class="col" />
-                    <div class="col-auto ">
-                        <button type="submit" class="btn btn-outline-primary px-4">Speichern</button>
-                    </div>
-                </div>
-
-            </EditForm>
-        </div> *@
     }
 
 </div>
@@ -188,12 +109,9 @@
     private FinancialPlanModel? _financialPlan = null;
     private bool _showDeleteConfirmDialog = false;
 
-    [Parameter]
-    public int Id { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
-        _financialPlan = await _db.GetFinancialPlanAsync(Id);
+        _financialPlan = await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId);
     }
 
     private async Task HandleValidSubmitAsync()

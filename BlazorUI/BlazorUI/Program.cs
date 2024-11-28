@@ -1,9 +1,8 @@
-using BlazorUI.Client.Pages;
 using BlazorUI.Components;
+using BlazorUI.SessionData;
 
 using HFTLibrary.Data;
 using HFTLibrary.DBContexts;
-using HFTLibrary.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +14,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped<EFCoreContext>();
 builder.Services.AddScoped<IEFCoreData, EFCoreData>();
 
+builder.Services.AddSingleton<SessionData>();
 
 var app = builder.Build();
 

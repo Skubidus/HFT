@@ -1,7 +1,9 @@
 ﻿@using HFTLibrary.Data
 @using HFTLibrary.Models
+@using SessionData
 
 @inject IEFCoreData _db;
+@inject SessionData _session;
 @inject NavigationManager _nav;
 
 <div class="row card bg-danger">
@@ -15,8 +17,8 @@
         </div>
 
         <div class="row bg-info text-black my-2 gx-1 px-1 rounded">
-            <label>Nane: @FinancialPlan.Name</label>
-            <label>Beschreibung: @FinancialPlan.Description</label>
+            <label>Nane: @_financialPlan?.Name</label>
+            <label>Beschreibung: @_financialPlan?.Description</label>
         </div>
 
         <div class="row">
@@ -36,11 +38,15 @@
 
 @code
 {
-    [Parameter]
-    public required FinancialPlanModel FinancialPlan { get; init; }
+    private FinancialPlanModel? _financialPlan;
 
     [Parameter]
     public EventCallback<bool> OnDialogClosed { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _financialPlan = await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId);
+    }
 
     private async Task HandleButtonClickAsync(bool doDelete)
     {
@@ -48,11 +54,12 @@
 
         if (doDelete == false)
         {
-            _nav.NavigateTo($"/FinancialPlanData/{FinancialPlan.Id}");
+            _nav.NavigateTo($"/FinancialPlanData");
             return;
         }
 
-        await _db.DeleteFinancialPlanAsync(FinancialPlan.Id);
-        _nav.NavigateTo($"/FinancialPlanData");
+        await _db.DeleteFinancialPlanAsync(_session.SelectedFinancialPlanId);
+        _session.SelectedFinancialPlanId = 0;
+        _nav.NavigateTo($"/");
     }
 }
