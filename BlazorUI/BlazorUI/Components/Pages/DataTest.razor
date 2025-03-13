@@ -11,7 +11,7 @@
 
     private async Task GetDataAsync()
     {
-        data = await _db.GetShortFinancialPlanListAsync();
+        data = await _db.GetFinancialPlanListLazyAsync();
     }
 
     private async Task InsertDataAsync()
@@ -28,7 +28,7 @@
     private async Task DeleteEntryAsync(int id)
     {
         await _db.DeleteFinancialPlanAsync(id);
-        data = await _db.GetShortFinancialPlanListAsync();
+        data = await _db.GetFinancialPlanListLazyAsync();
     }
 }
 

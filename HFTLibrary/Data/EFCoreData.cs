@@ -20,14 +20,14 @@ public class EFCoreData : IEFCoreData
     }
 
     #region FinancialPlanModel
-    public async Task<List<(int Id, string Name)>> GetShortFinancialPlanListAsync()
+    public async Task<List<(int Id, string Name)>> GetFinancialPlanListLazyAsync()
     {
         var query = _db.FinancialPlans.Select(x => new { x.Id, x.Name });
         var resultList = await query.ToListAsync();
         return resultList.Select(x => (x.Id, x.Name)).ToList();
     }
 
-    public async Task<List<FinancialPlanModel>> GetFullFinancialPlanListAsync()
+    public async Task<List<FinancialPlanModel>> GetFinancialPlanListAsync()
     {
         return await _db.FinancialPlans
             .Include(p => p.SavingsPlan)
@@ -37,13 +37,13 @@ public class EFCoreData : IEFCoreData
             .ToListAsync();
     }
 
-    public async Task<FinancialPlanModel?> GetFinancialPlanAsync(int id)
+    public async Task<FinancialPlanModel?> GetFinancialPlanLazyAsync(int id)
     {
         return await _db.FinancialPlans
             .SingleOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<FinancialPlanModel?> GetFullFinancialPlanAsync(int id)
+    public async Task<FinancialPlanModel?> GetFinancialPlanAsync(int id)
     {
         return await _db.FinancialPlans
             .Include(p => p.SavingsPlan)
@@ -61,7 +61,7 @@ public class EFCoreData : IEFCoreData
 
     public async Task UpdateFinancialPlanAsync(FinancialPlanModel plan)
     {
-        var originalPlan = _db.FinancialPlans.Single(x => x.Id == plan.Id);
+        var originalPlan = await GetFinancialPlanAsync(plan.Id);
         originalPlan = plan;
         _ = await _db.SaveChangesAsync();
     }
@@ -119,10 +119,11 @@ public class EFCoreData : IEFCoreData
         throw new NotImplementedException();
     }
 
-    public ExpenseEntryModel? GetExpenseEntry(int id)
+    public async Task<ExpenseEntryModel?> GetExpenseEntryAsync(int id)
     {
-        // TODO: implement GetExpenseEntry()
-        throw new NotImplementedException();
+        return await _db.ExpenseEntries
+            .Include(e => e.AssociatedBankAccount)
+            .SingleOrDefaultAsync(x => x.Id == id);
     }
 
     public void CreateExpenseEntry(ExpenseEntryModel entry)
@@ -131,10 +132,11 @@ public class EFCoreData : IEFCoreData
         throw new NotImplementedException();
     }
 
-    public void UpdateExpenseEntry(ExpenseEntryModel entry)
+    public async Task UpdateExpenseAsync(ExpenseEntryModel entry)
     {
-        // TODO: implement UpdateExpenseEntry()
-        throw new NotImplementedException();
+        var originalEntry = await GetExpenseEntryAsync(entry.Id);
+        originalEntry = entry;
+        _ = await _db.SaveChangesAsync();
     }
 
     public void DeleteExpenseEntry(int id)

@@ -45,7 +45,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _financialPlan = await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId);
+        _financialPlan = await _db.GetFinancialPlanLazyAsync(_session.SelectedFinancialPlanId);
     }
 
     private async Task HandleButtonClickAsync(bool doDelete)

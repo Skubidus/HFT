@@ -1,4 +1,4 @@
-﻿@page "/FinancialPlanData"
+﻿@page "/ModifyExpense/{Id:int}"
 @rendermode InteractiveServer
 
 @using HFTLibrary.Data
@@ -7,37 +7,46 @@
 @using System.Diagnostics
 
 @inject IEFCoreData _db;
+@inject NavigationManager _nav;
 @inject SessionData _session;
 @inject IConfiguration _config;
 
-<PageTitle>@_config["AppShortName"] - Allgemeine Daten</PageTitle>
+<PageTitle>@_config["AppShortName"] - Ausgabe bearbeiten</PageTitle>
 
 <div class="container mb-4">
     <div class="row">
-        <h3>Allgemeine Daten</h3>
+        <h3>Einkommen bearbeiten</h3>
     </div>
 
     @if (_financialPlan is null)
     {
         <div class="row">
-            <p class="fs-4 text-danger">Lade Finanzplan...</p>
+            <p class="fs-4 text-danger">Kein Finanzplan ausgewählt!</p>
+        </div>
+    }
+    else if (_expense is null)
+    {
+        <div class="row">
+            <p class="fs-4 text-danger">Ausgabe nicht ausgewählt oder ID nicht gefunden!</p>
         </div>
     }
     else if (_showDeleteConfirmDialog)
     {
-        <DeleteFinancialPlan OnDialogClosed="HandleDialogClosed" />
+        <div class="row">
+            <p class="fs-4 text-danger">TODO: Lösch-Dialog für Ausgaben!</p>
+        </div>
     }
     else
     {
         <div class="row">
-            <EditForm Model="@_financialPlan" OnSubmit="HandleValidSubmitAsync" FormName="FinancialPlanForm">
+            <EditForm Model="@_expense" OnSubmit="HandleValidSubmitAsync" FormName="ExpenseForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
                 <div class="row card">
 
                     <div class="card-body d-flex flex-row justify-content-end align-items-start">
-                        <div class="col-auto bi bi-trash btn btn-outline-danger py-2" title="Finanzplan löschen" @onclick="HandleDeleteButton" />
+                        <div class="col-auto bi bi-trash btn btn-outline-danger py-2" title="Ausgabe löschen" @onclick="OnDeleteButtonClick" />
                     </div>
 
                     <div class="col">
@@ -47,7 +56,7 @@
                                 <label>ID:</label>
                             </div>
                             <div class="col">
-                                <span>@_financialPlan.Id</span>
+                                <span>@_expense?.Id</span>
                             </div>
                         </div>
 
@@ -56,7 +65,7 @@
                                 <label>Name:</label>
                             </div>
                             <div class="col">
-                                <InputText @bind-Value="@_financialPlan.Name" class="w-100" />
+                                <InputText @bind-Value="@_expense!.Name" class="w-100" />
                             </div>
                         </div>
 
@@ -65,7 +74,16 @@
                                 <label>Beschreibung:</label>
                             </div>
                             <div class="col">
-                                <InputText @bind-Value="@_financialPlan.Description" class="w-100" />
+                                <InputText @bind-Value="@_expense.Description" class="w-100" />
+                            </div>
+                        </div>
+
+                        <div class="row my-2">
+                            <div class="col-4">
+                                <label>Betrag:</label>
+                            </div>
+                            <div class="col">
+                                <InputText @bind-Value="@_expense.PriceString" class="w-100" />
                             </div>
                         </div>
 
@@ -74,7 +92,7 @@
                                 <label>Erstellt am:</label>
                             </div>
                             <div class="col">
-                                <span>@_financialPlan.DateCreated.ToShortDateString() - @_financialPlan.DateCreated.ToLongTimeString() Uhr</span>
+                                <span>@_expense.DateCreated.ToShortDateString() - @_expense.DateCreated.ToLongTimeString() Uhr</span>
                             </div>
                         </div>
 
@@ -83,7 +101,7 @@
                                 <label>Zuletzt bearbeitet am:</label>
                             </div>
                             <div class="col">
-                                <span>@_financialPlan.DateModified.ToShortDateString() - @_financialPlan.DateModified.ToLongTimeString() Uhr</span>
+                                <span>@_expense.DateModified.ToShortDateString() - @_expense.DateModified.ToLongTimeString() Uhr</span>
                             </div>
                         </div>
                     </div>
@@ -95,6 +113,9 @@
 
                 <div class="row my-2">
                     <div class="col" />
+                    <div class="col-auto ">
+                        <a href="/Expenses" class="btn btn-outline-secondary px-4">Abbrechen</a>
+                    </div>
                     <div class="col-auto ">
                         <button type="submit" class="btn btn-outline-primary px-4">Speichern</button>
                     </div>
@@ -108,29 +129,41 @@
 
 @code {
     private FinancialPlanModel? _financialPlan = null;
+    private ExpenseEntryModel? _expense = null;
     private bool _showDeleteConfirmDialog = false;
+
+    [Parameter]
+    public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        _financialPlan = await _db.GetFinancialPlanLazyAsync(_session.SelectedFinancialPlanId);
+        _financialPlan = await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId);
+
+        if (_financialPlan is null)
+        {
+            throw new InvalidOperationException("Financial plan not found.");
+        }
+
+        _expense = _financialPlan.Expenses.SingleOrDefault(x => x.Id == Id);
     }
 
     private async Task HandleValidSubmitAsync()
     {
         Debug.WriteLine($"In {nameof(HandleValidSubmitAsync)}()");
 
-        if (_financialPlan is null)
+        if (_financialPlan is null
+        || _expense is null)
         {
             return;
         }
 
-        _financialPlan.DateModified = DateTime.Now;
-        await _db.UpdateFinancialPlanAsync(_financialPlan);
+        _expense.DateModified = DateTime.Now;
+        await _db.UpdateExpenseAsync(_expense);
     }
 
-    private void HandleDeleteButton()
+    private void OnDeleteButtonClick()
     {
-        Debug.WriteLine($"In {nameof(HandleDeleteButton)}()");
+        Debug.WriteLine($"In {nameof(OnDeleteButtonClick)}()");
         _showDeleteConfirmDialog = true;
     }
 

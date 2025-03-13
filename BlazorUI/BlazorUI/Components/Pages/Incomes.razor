@@ -25,7 +25,9 @@
     }
     else if (_showDeleteConfirmDialog)
     {
-        <DeleteFinancialPlan FinancialPlan="_financialPlan" OnDialogClosed="HandleDialogClosed" />
+        <div class="row">
+            <p class="fs-4 text-danger">TODO: Lösch-Dialog für Einkommen!</p>
+        </div>
     }
     else
     {
@@ -36,56 +38,30 @@
 
                 <div class="row card">
 
-                    <div class="card-body d-flex flex-row justify-content-end align-items-start">
+      @*               <div class="card-body d-flex flex-row justify-content-end align-items-start">
                         <div class="col-auto bi bi-trash btn btn-outline-danger py-2" title="Finanzplan löschen" @onclick="HandleDeleteButton" />
-                    </div>
+                    </div> *@
 
                     <div class="col">
 
                         <div class="row my-2">
-                            <div class="col-4">
-                                <label>ID:</label>
+                            <div class="col-1">
+                                <label>Pos.</label>
                             </div>
+
                             <div class="col">
-                                <span>@_financialPlan.Id</span>
+                                <label>Bezeichnung</label>
+                            </div>
+
+                            <div class="col-2">
+                                <label>Konto</label>
+                            </div>
+
+                            <div class="col-2">
+                                <label></label>
                             </div>
                         </div>
 
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Name:</label>
-                            </div>
-                            <div class="col">
-                                <InputText @bind-Value="@_financialPlan.Name" class="w-100" />
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Beschreibung:</label>
-                            </div>
-                            <div class="col">
-                                <InputText @bind-Value="@_financialPlan.Description" class="w-100" />
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Erstellt am:</label>
-                            </div>
-                            <div class="col">
-                                <span>@_financialPlan.DateCreated.ToShortDateString() - @_financialPlan.DateCreated.ToLongTimeString() Uhr</span>
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Zuletzt bearbeitet am:</label>
-                            </div>
-                            <div class="col">
-                                <span>@_financialPlan.DateModified.ToShortDateString() - @_financialPlan.DateModified.ToLongTimeString() Uhr</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -110,12 +86,9 @@
     private FinancialPlanModel? _financialPlan = null;
     private bool _showDeleteConfirmDialog = false;
 
-    [Parameter]
-    public int Id { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
-        _financialPlan = await _db.GetFinancialPlanAsync(Id);
+        _financialPlan = await _db.GetFinancialPlanLazyAsync(_session.SelectedFinancialPlanId);
     }
 
     private async Task HandleValidSubmitAsync()

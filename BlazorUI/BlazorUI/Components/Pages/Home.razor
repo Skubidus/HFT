@@ -54,7 +54,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _financialPlans = await _db.GetShortFinancialPlanListAsync();
+        _financialPlans = await _db.GetFinancialPlanListLazyAsync();
         await base.OnInitializedAsync();
     }
 
