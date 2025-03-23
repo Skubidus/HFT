@@ -1,32 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using HFTLibrary.DTOs;
+
+using System.ComponentModel.DataAnnotations;
 
 namespace HFTLibrary.Models;
 
 public class ExpenseEntryModel
 {
-	public int Id { get; set; }
-	public required string Name { get; set; }
-	public required decimal Price { get; set; }
-    [NotMapped]
-    public string PriceString
-    {
-        get
-        {
-            return Price.ToString("#,#0.00");
-        }
+    public int Id { get; set; }
 
-        set
-        {
-            if (decimal.TryParse(value, out decimal price) == false)
-            {
-                return;
-            }
+    [StringLength(100)]
+    public required string Name { get; set; }
 
-            Price = price;
-        }
-    }
+    public required decimal Price { get; set; }
+
+    [StringLength(500)]
     public string Description { get; set; } = string.Empty;
-	public BankAccountModel? AssociatedBankAccount { get; set; }
-	public required DateTime DateCreated { get; set; }
-	public required DateTime DateModified { get; set; }
+    public BankAccountModel? AssociatedBankAccount { get; set; }
+    public required DateTime DateCreated { get; set; }
+    public required DateTime DateModified { get; set; }
 }

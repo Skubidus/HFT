@@ -1,10 +1,11 @@
 ﻿@page "/ModifyExpense/{Id:int}"
 @rendermode InteractiveServer
 
+@using System.Diagnostics
 @using HFTLibrary.Data
+@using HFTLibrary.Logic
 @using HFTLibrary.Models
 @using SessionData
-@using System.Diagnostics
 
 @inject IEFCoreData _db;
 @inject NavigationManager _nav;
@@ -144,7 +145,13 @@
             throw new InvalidOperationException("Financial plan not found.");
         }
 
-        _expense = _financialPlan.Expenses.SingleOrDefault(x => x.Id == Id);
+        var tempExpense = _financialPlan.Expenses.SingleOrDefault(x => x.Id == Id);
+        if (tempExpense is null)
+        {
+            throw new InvalidOperationException($"Expense with ID {Id} not found.");
+        }
+
+        _expense = HelperMethods.CloneJson<ExpenseEntryModel>(tempExpense);
     }
 
     private async Task HandleValidSubmitAsync()
@@ -158,7 +165,7 @@
         }
 
         _expense.DateModified = DateTime.Now;
-        await _db.UpdateExpenseAsync(_expense);
+        await _db.UpdateExpenseEntryAsync(_expense);
     }
 
     private void OnDeleteButtonClick()

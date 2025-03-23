@@ -1,10 +1,11 @@
 ﻿using HFTLibrary.DBContexts;
+using HFTLibrary.DTOs;
+using HFTLibrary.Logic;
 using HFTLibrary.Models;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
-using System.Runtime.CompilerServices;
+using System.Xml;
 
 namespace HFTLibrary.Data;
 
@@ -20,14 +21,23 @@ public class EFCoreData : IEFCoreData
     }
 
     #region FinancialPlanModel
-    public async Task<List<(int Id, string Name)>> GetFinancialPlanListLazyAsync()
+    public async Task<FinancialPlanDTO?> GetFinancialPlanAsync(int id)
     {
-        var query = _db.FinancialPlans.Select(x => new { x.Id, x.Name });
-        var resultList = await query.ToListAsync();
-        return resultList.Select(x => (x.Id, x.Name)).ToList();
+        return await _db.FinancialPlans
+            .Include(p => p.SavingsPlan)
+            .Include(p => p.BankAccounts)
+            .Include(p => p.Incomes)
+            .Include(p => p.Expenses)
+            .SingleOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<List<FinancialPlanModel>> GetFinancialPlanListAsync()
+    public async Task<FinancialPlanDTO?> GetFinancialPlanLazyAsync(int id)
+    {
+        return await _db.FinancialPlans
+            .SingleOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<List<FinancialPlanDTO>> GetFinancialPlanListAsync()
     {
         return await _db.FinancialPlans
             .Include(p => p.SavingsPlan)
@@ -37,29 +47,20 @@ public class EFCoreData : IEFCoreData
             .ToListAsync();
     }
 
-    public async Task<FinancialPlanModel?> GetFinancialPlanLazyAsync(int id)
+    public async Task<List<(int Id, string Name)>> GetFinancialPlanListLazyAsync()
     {
-        return await _db.FinancialPlans
-            .SingleOrDefaultAsync(x => x.Id == id);
+        var query = _db.FinancialPlans.Select(x => new { x.Id, x.Name });
+        var resultList = await query.ToListAsync();
+        return resultList.Select(x => (x.Id, x.Name)).ToList();
     }
 
-    public async Task<FinancialPlanModel?> GetFinancialPlanAsync(int id)
-    {
-        return await _db.FinancialPlans
-            .Include(p => p.SavingsPlan)
-            .Include(p => p.BankAccounts)
-            .Include(p => p.Incomes)
-            .Include(p => p.Expenses)
-            .SingleOrDefaultAsync(x => x.Id == id);
-    }
-
-    public async Task CreateFinancialPlanAsync(FinancialPlanModel plan)
+    public async Task CreateFinancialPlanAsync(FinancialPlanDTO plan)
     {
         _ = _db.FinancialPlans.Add(plan);
         _ = await _db.SaveChangesAsync();
     }
 
-    public async Task UpdateFinancialPlanAsync(FinancialPlanModel plan)
+    public async Task UpdateFinancialPlanAsync(FinancialPlanDTO plan)
     {
         var originalPlan = await GetFinancialPlanAsync(plan.Id);
         originalPlan = plan;
@@ -80,159 +81,123 @@ public class EFCoreData : IEFCoreData
     }
     #endregion
 
+
+
     #region BankAccountModel
-    public List<BankAccountModel> GetAllBankAccounts()
+    public async Task<BankAccountDTO?> GetBankAccountAsync(int id)
     {
-        // TODO: implement GetAllBankAccounts()
+        // TODO: implement GetBankAccountAsync()
         throw new NotImplementedException();
     }
 
-    public BankAccountModel? GetBankAccount(int id)
+    public async Task<List<BankAccountDTO>> GetBankAccountListAsync()
     {
-        // TODO: implement GetBankAccount()
+        // TODO: implement GetBankAccountListAsync()
         throw new NotImplementedException();
     }
 
-    public void CreateBankAccount(BankAccountModel account)
+    public async Task CreateBankAccountAsync(BankAccountDTO account)
     {
-        // TODO: implement CreateBankAccount()
+        // TODO: implement CreateBankAccountAsync()
         throw new NotImplementedException();
     }
 
-    public void UpdateBankAccount(BankAccountModel account)
+    public async Task UpdateBankAccountAsync(BankAccountDTO account)
     {
-        // TODO: implement UpdateBankAcocunt()
+        // TODO: implement UpdateBankAccountAsync()
         throw new NotImplementedException();
     }
 
-    public void DeleteBankAccount(int id)
+    public async Task DeleteBankAccountAsync(int id)
     {
-        // TODO: implement DeleteBankAccount()
+        // TODO: implement DeleteBankAccountAsync()
         throw new NotImplementedException();
     }
     #endregion
 
+
+
     #region ExpenseEntryModel
-    public List<ExpenseEntryModel> GetAllExpenseEntries()
+    public async Task<ExpenseEntryDTO?> GetExpenseEntryAsync(int id)
     {
-        // TODO: implement GetAllExpenseEntries()
-        throw new NotImplementedException();
+        var model = await GetExpenseEntryModelAsync(id);
+
+        if (model is null)
+        {
+            return null;
+        }
+
+        var output = new ExpenseEntryDTO
+        {
+            Id = model.Id,
+            Name = model.Name,
+            Description = model.Description,
+            Price = model.Price,
+            AssociatedBankAccountId = model.AssociatedBankAccount?.Id,
+            DateCreated = model.DateCreated,
+            DateModified = model.DateModified
+        };
+
+        return output;
     }
 
-    public async Task<ExpenseEntryModel?> GetExpenseEntryAsync(int id)
+    private async Task<ExpenseEntryModel?> GetExpenseEntryModelAsync(int id)
     {
         return await _db.ExpenseEntries
             .Include(e => e.AssociatedBankAccount)
             .SingleOrDefaultAsync(x => x.Id == id);
     }
 
-    public void CreateExpenseEntry(ExpenseEntryModel entry)
+    public async Task<List<ExpenseEntryDTO>> GetExpenseEntryListAsync()
     {
-        // TODO: implement CreateExpenseEntry()
+        // TODO: implement GetExpenseEntryListAsync()
         throw new NotImplementedException();
     }
 
-    public async Task UpdateExpenseAsync(ExpenseEntryModel entry)
+    public async Task CreateExpenseEntryAsync(ExpenseEntryDTO entry)
     {
-        var originalEntry = await GetExpenseEntryAsync(entry.Id);
-        originalEntry = entry;
+        // TODO: implement CreateExpenseEntryAsync()
+        throw new NotImplementedException();
+    }
+
+    public async Task UpdateExpenseEntryAsync(ExpenseEntryDTO entry)
+    {
+        // TODO: UpdateExpenseEntryAsync() needs testing
+
+        var originalEntry = await GetExpenseEntryAsync(entry.Id)
+            ?? throw new InvalidOperationException($"{nameof(ExpenseEntryModel)} with ID {entry.Id} not found in database.");
+
+        originalEntry.Name = entry.Name;
+        originalEntry.Description = entry.Description;
+        originalEntry.Price = entry.Price;
+        if (entry.AssociatedBankAccountId.HasValue)
+        {
+            originalEntry.AssociatedBankAccount = GetBankAccount(entry.AssociatedBankAccountId.Value);
+        }
+        originalEntry.DateModified = DateTime.Now;
+
         _ = await _db.SaveChangesAsync();
     }
 
-    public void DeleteExpenseEntry(int id)
+    public async Task DeleteExpenseEntryAsync(int id)
     {
-        // TODO: implement DeleteExpenseEntry()
+        // TODO: implement DeleteExpenseEntryAsync()
         throw new NotImplementedException();
     }
     #endregion
+
+
 
     #region IncomeEntryModel
-    public List<IncomeEntryModel> GetAllIncomeEntries()
-    {
-        // TODO: implement GetAllIncomeEntries()
-        throw new NotImplementedException();
-    }
-
-    public IncomeEntryModel? GetIncomeEntry(int id)
-    {
-        // TODO: implement GetIncomeEntry()
-        throw new NotImplementedException();
-    }
-
-    public void CreateIncomeEntry(IncomeEntryModel entry)
-    {
-        // TODO: implement CreateIncomeEntry()
-        throw new NotImplementedException();
-    }
-
-    public void UpdateIncomeEntry(IncomeEntryModel entry)
-    {
-        // TODO: implement UpdateIncomeEntry()
-        throw new NotImplementedException();
-    }
-
-    public void DeleteIncomeEntry(int id)
-    {
-        // TODO: implement DeleteIncomeEntry()
-        throw new NotImplementedException();
-    }
     #endregion
+
+
 
     #region SavingsPlanModel
-    public SavingsPlanModel? GetSavingsPlan(int id)
-    {
-        // TODO: implement GetSavingsPlan()
-        throw new NotImplementedException();
-    }
-
-    public void CreateSavingsPlan(SavingsPlanModel plan)
-    {
-        // TODO: implement CreateSavingsPlan()
-        throw new NotImplementedException();
-    }
-
-    public void UpdateSavingsPlan(SavingsPlanModel plan)
-    {
-        // TODO: implement UpdateSavingsPlan()
-        throw new NotImplementedException();
-    }
-
-    public void DeleteSavingsPlan(int id)
-    {
-        // TODO: implement DeleteSavingsPlan()
-        throw new NotImplementedException();
-    }
     #endregion
 
+
+
     #region SavingsEntryModel
-    public List<SavingsEntryModel> GetAllSavingsEntries()
-    {
-        // TODO: implement GetAllSavingsEntries()
-        throw new NotImplementedException();
-    }
-
-    public SavingsEntryModel? GetSavingsEntry(int id)
-    {
-        // TODO: implement GetSavingsEntry()
-        throw new NotImplementedException();
-    }
-
-    public void CreateSavingsEntry(SavingsEntryModel entry)
-    {
-        // TODO: implement CreateSavingsEntry()
-        throw new NotImplementedException();
-    }
-
-    public void UpdateSavingsEntry(SavingsEntryModel entry)
-    {
-        // TODO: implement UpdateSavingsEntry()
-        throw new NotImplementedException();
-    }
-
-    public void DeleteSavingsEntry(int id)
-    {
-        // TODO: implement DeleteSavingsEntry()
-        throw new NotImplementedException();
-    }
     #endregion
 }

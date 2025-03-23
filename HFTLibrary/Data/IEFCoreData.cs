@@ -1,16 +1,36 @@
 ﻿using HFTLibrary.Models;
+using HFTLibrary.DTOs;
 
 namespace HFTLibrary.Data;
 
 public interface IEFCoreData
 {
-    Task<List<FinancialPlanModel>> GetFinancialPlanListAsync();
+    // FinancialPlan
+    Task<FinancialPlanDTO?> GetFinancialPlanAsync(int id);
+    Task<FinancialPlanDTO?> GetFinancialPlanLazyAsync(int id);
+    Task<List<FinancialPlanDTO>> GetFinancialPlanListAsync();
     Task<List<(int Id, string Name)>> GetFinancialPlanListLazyAsync();
-    Task<FinancialPlanModel?> GetFinancialPlanAsync(int id);
-    Task<FinancialPlanModel?> GetFinancialPlanLazyAsync(int id);
-    Task CreateFinancialPlanAsync(FinancialPlanModel plan);
+    Task CreateFinancialPlanAsync(FinancialPlanDTO plan);
+    Task UpdateFinancialPlanAsync(FinancialPlanDTO plan);
     Task DeleteFinancialPlanAsync(int id);
-    Task UpdateFinancialPlanAsync(FinancialPlanModel plan);
-    Task<ExpenseEntryModel?> GetExpenseEntryAsync(int id);
-    Task UpdateExpenseAsync(ExpenseEntryModel entry);
+
+    // BankAccount
+    Task<BankAccountDTO?> GetBankAccountAsync(int id);
+    Task<List<BankAccountDTO>> GetBankAccountListAsync();
+    Task CreateBankAccountAsync(BankAccountDTO account);
+    Task UpdateBankAccountAsync(BankAccountDTO account);
+    Task DeleteBankAccountAsync(int id);
+
+    // ExpenseEntry
+    Task<ExpenseEntryDTO?> GetExpenseEntryAsync(int id);
+    Task<List<ExpenseEntryDTO>> GetExpenseEntryListAsync();
+    Task CreateExpenseEntryAsync(ExpenseEntryDTO entry);
+    Task UpdateExpenseEntryAsync(ExpenseEntryDTO entry);
+    Task DeleteExpenseEntryAsync(int id);
+
+    // IncomeEntry
+
+    // SavingsEntry
+
+    // SavingsPlan
 }
