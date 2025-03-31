@@ -14,7 +14,7 @@ public record ExpenseEntryDTO
 
     [StringLength(500)]
     public string Description { get; init; } = string.Empty;
-    public int? AssociatedBankAccountId { get; init; }
+    public BankAccountDTO? AssociatedBankAccount { get; init; }
     public required DateTime DateCreated { get; init; }
     public required DateTime DateModified { get; init; }
 }

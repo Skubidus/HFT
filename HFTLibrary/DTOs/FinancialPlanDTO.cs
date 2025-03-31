@@ -1,6 +1,4 @@
-﻿using HFTLibrary.Models;
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace HFTLibrary.DTOs;
 public record FinancialPlanDTO
@@ -12,10 +10,10 @@ public record FinancialPlanDTO
 
     [StringLength(500)]
     public string Description { get; init; } = string.Empty;
-    public List<IncomeEntryModel> Incomes { get; init; } = [];
-    public List<ExpenseEntryModel> Expenses { get; init; } = [];
-    public List<BankAccountModel> BankAccounts { get; init; } = [];
-    public int? SavingsPlanId { get; init; } = null;
+    public IReadOnlyList<IncomeEntryDTO> Incomes { get; init; } = Array.Empty<IncomeEntryDTO>();
+    public IReadOnlyList<ExpenseEntryDTO> Expenses { get; init; } = Array.Empty<ExpenseEntryDTO>();
+    public IReadOnlyList<BankAccountDTO> BankAccounts { get; init; } = Array.Empty<BankAccountDTO>();
+    public SavingsPlanDTO? SavingsPlan { get; init; } = null;
     public required DateTime DateCreated { get; init; }
     public required DateTime DateModified { get; init; }
 }

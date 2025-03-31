@@ -10,10 +10,8 @@ public record SavingsPlanDTO
 
     [StringLength(100)]
     public required string Name { get; init; }
-    public List<SavingsEntryModel> SavingsEntries { get; init; } = [];
-    //public decimal SavingsTotal => SavingsEntries.Sum(x => x.Price);
+    public IReadOnlyList<SavingsEntryDTO> SavingsEntries { get; init; } = Array.Empty<SavingsEntryDTO>();
     public int DurationInMonths { get; init; }
-    //public decimal SavingsRatePerMonth => SavingsTotal / DurationInMonths;
 
     [StringLength(500)]
     public string Description { get; init; } = string.Empty;
