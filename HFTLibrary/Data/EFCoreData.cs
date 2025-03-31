@@ -406,8 +406,8 @@ public class EFCoreData : IEFCoreData
     {
         var model = dto.ToExpenseEntryModel();
 
-        model.DateCreated = dto.DateCreated;
-        model.DateModified = dto.DateModified;
+        model.DateCreated = DateTime.Now;
+        model.DateModified = DateTime.Now;
 
         using var transaction = await _db.Database.BeginTransactionAsync();
         try
@@ -436,7 +436,7 @@ public class EFCoreData : IEFCoreData
         var oldEntry = (await GetExpenseEntryAsync(dto.Id))?.ToExpenseEntryModel();
         if (oldEntry is null)
         {
-            throw new InvalidOperationException($"Could not load expense entry with ID {dto.Id}");
+            return false;
         }
 
         var newEntry = dto.ToExpenseEntryModel();
@@ -515,120 +515,367 @@ public class EFCoreData : IEFCoreData
 
 
     #region IncomeEntryModel
-    public Task<IncomeEntryDTO?> GetIncomeEntryAsync(int id)
+    public async Task<IncomeEntryDTO?> GetIncomeEntryAsync(int id)
     {
-        // TODO: implement GetIncomeEntryAsync()
-        throw new NotImplementedException();
+        return (await _db.IncomeEntries.FindAsync(id))?.ToIncomeEntryDTO();
     }
 
-    public Task<List<IncomeEntryDTO>> GetIncomeEntryListAsync()
+    public async Task<List<IncomeEntryDTO>> GetIncomeEntryListAsync()
     {
-        // TODO: implement GetIncomeEntryListAsync()
-        throw new NotImplementedException();
+        var entries = await _db.IncomeEntries.ToListAsync();
+
+        var output = new List<IncomeEntryDTO>(entries.Count);
+        entries.ForEach(x => output.Add(x.ToIncomeEntryDTO()));
+
+        return output;
     }
 
-    public Task<bool> CreateOrUpdateIncomeEntryAsync(IncomeEntryDTO dto)
+    public async Task<bool> CreateOrUpdateIncomeEntryAsync(IncomeEntryDTO dto)
     {
-        // TODO: implement CreateOrUpdateIncomeEntryAsync()
-        throw new NotImplementedException();
+        var isNewEntry = await _db.IncomeEntries.FindAsync(dto.Id) is null;
+
+        return isNewEntry ? await CreateIncomeEntryAsync(dto)
+                          : await UpdateIncomeEntryAsync(dto);
     }
 
-    private Task<bool> CreateIncomeEntryAsync(IncomeEntryDTO dto)
+    private async Task<bool> CreateIncomeEntryAsync(IncomeEntryDTO dto)
     {
-        // TODO: implement CreateIncomeEntryAsync()
-        throw new NotImplementedException();
+        var model = dto.ToIncomeModel();
+
+        model.DateCreated = DateTime.Now;
+        model.DateModified = DateTime.Now;
+
+        using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.IncomeEntries.Add(model);
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
 
-    private Task<bool> UpdateIncomeEntryAsync(IncomeEntryDTO dto)
+    private async Task<bool> UpdateIncomeEntryAsync(IncomeEntryDTO dto)
     {
-        // TODO: implement UpdateIncomeEntryAsync()
-        throw new NotImplementedException();
+        var oldEntry = (await GetIncomeEntryAsync(dto.Id))?.ToIncomeModel();
+        if (oldEntry is null)
+        {
+            return false;
+        }
+
+        var newEntry = dto.ToIncomeModel();
+
+        oldEntry.Name = newEntry.Name;
+        oldEntry.Description = newEntry.Description;
+
+        oldEntry.TotalAmount = newEntry.TotalAmount;
+
+        newEntry.DateModified = DateTime.Now;
+
+        using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.Entry(oldEntry).State = EntityState.Modified;
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
 
-    public Task<bool> DeleteIncomeEntryAsync(int id)
+    public async Task<bool> DeleteIncomeEntryAsync(int id)
     {
-        // TODO: implement DeleteIncomeEntryAsync()
-        throw new NotImplementedException();
+        var entry = await _db.IncomeEntries.FindAsync(id);
+        if (entry is null)
+        {
+            return false;
+        }
+
+        var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.IncomeEntries.Remove(entry);
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
     #endregion
 
 
 
     #region SavingsEntry
-    public Task<SavingsEntryDTO?> GetSavingsEntryAsync(int id)
+    public async Task<SavingsEntryDTO?> GetSavingsEntryAsync(int id)
     {
-        // TODO: implement GetSavingsEntryAsync()
-        throw new NotImplementedException();
+        return (await _db.SavingsEntries.FindAsync(id))?.ToSavingsEntryDTO();
     }
 
-    public Task<List<SavingsEntryDTO>> GetSavingsEntryListAsync()
+    public async Task<List<SavingsEntryDTO>> GetSavingsEntryListAsync()
     {
-        // TODO: implement GetSavingsEntryAsync()
-        throw new NotImplementedException();
+        var entries = await _db.SavingsEntries.ToListAsync();
+
+        var output = new List<SavingsEntryDTO>(entries.Count);
+        entries.ForEach(x => output.Add(x.ToSavingsEntryDTO()));
+
+        return output;
     }
 
-    public Task<bool> CreateOrUpdateSavingsEntryAsync(SavingsEntryDTO dto)
+    public async Task<bool> CreateOrUpdateSavingsEntryAsync(SavingsEntryDTO dto)
     {
-        // TODO: implement CreateOrUpdateSavingsEntryAsync()
-        throw new NotImplementedException();
+        var isNewEntry = await _db.SavingsEntries.FindAsync(dto.Id) is null;
+
+        return isNewEntry ? await CreateSavingsEntryAsync(dto)
+                          : await UpdateSavingsEntryAsync(dto);
     }
 
-    private Task<bool> CreateSavingsEntryAsync(SavingsEntryDTO dto)
+    private async Task<bool> CreateSavingsEntryAsync(SavingsEntryDTO dto)
     {
-        // TODO: implement CreateSavingsEntryAsync()
-        throw new NotImplementedException();
+        var model = dto.ToSavingsEntryModel();
+
+        model.DateCreated = DateTime.Now;
+        model.DateModified = DateTime.Now;
+
+        using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.SavingsEntries.Add(model);
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
 
-    private Task<bool> UpdateSavingsEntryAsync(SavingsEntryDTO dto)
+    private async Task<bool> UpdateSavingsEntryAsync(SavingsEntryDTO dto)
     {
-        // TODO: implement UpdateSavingsEntryAsync()
-        throw new NotImplementedException();
+        var oldEntry = (await GetSavingsEntryAsync(dto.Id))?.ToSavingsEntryModel();
+        if (oldEntry is null)
+        {
+            return false;
+        }
+
+        var newEntry = dto.ToSavingsEntryModel();
+
+        oldEntry.Name = newEntry.Name;
+        oldEntry.Description = newEntry.Description;
+
+        oldEntry.Price = newEntry.Price;
+
+        newEntry.DateModified = DateTime.Now;
+
+        using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.Entry(oldEntry).State = EntityState.Modified;
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
 
-    public Task<bool> DeleteSavingsEntryAsync(int id)
+    public async Task<bool> DeleteSavingsEntryAsync(int id)
     {
-        // TODO: implement DeleteSavingsEntryAsync()
-        throw new NotImplementedException();
+        var entry = await _db.SavingsEntries.FindAsync(id);
+        if (entry is null)
+        {
+            return false;
+        }
+
+        var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.SavingsEntries.Remove(entry);
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
     #endregion
 
 
 
     #region SavingsPlan
-    public Task<SavingsPlanDTO?> GetSavingsPlanAsync(int id)
+    public async Task<SavingsPlanDTO?> GetSavingsPlanAsync(int id)
     {
-        // TODO: implement GetSavingsPlanAsync()
-        throw new NotImplementedException();
+        var plan = await _db.SavingsPlans
+            .Include(s => s.SavingsEntries)
+            .Where(x => x.Id == id)
+            .SingleOrDefaultAsync();
+
+        return plan?.ToSavingsPlanDTO();
     }
 
-    public Task<List<SavingsPlanDTO>> GetSavingsPlanListAsync()
+    public async Task<List<SavingsPlanDTO>> GetSavingsPlanListAsync()
     {
-        // TODO: implement GetSavingsPlanListAsync()
-        throw new NotImplementedException();
+        var plans = await _db.SavingsPlans
+            .Include(s => s.SavingsEntries)
+            .ToListAsync();
+
+        var output = new List<SavingsPlanDTO>(plans.Count);
+        plans.ForEach(x => output.Add(x.ToSavingsPlanDTO()));
+
+        return output;
     }
 
-    public Task<bool> CreateOrUpdateSavingsPlanAsync(SavingsPlanDTO dto)
+    public async Task<bool> CreateOrUpdateSavingsPlanAsync(SavingsPlanDTO dto)
     {
-        // TODO: implement CreateOrUpdateSavingsPlanAsync()
-        throw new NotImplementedException();
+        var isNewPlan = await _db.SavingsPlans.FindAsync(dto.Id) is null;
+
+        return isNewPlan ? await CreateSavingsPlanAsync(dto)
+                         : await UpdateSavingsPlanAsync(dto);
     }
 
-    private Task<bool> CreateSavingsPlanAsync(SavingsPlanDTO dto)
+    private async Task<bool> CreateSavingsPlanAsync(SavingsPlanDTO dto)
     {
-        // TODO: implement CreateSavingsPlanAsync()
-        throw new NotImplementedException();
+        var model = dto.ToSavingsPlanModel();
+
+        model.DateCreated = DateTime.Now;
+        model.DateModified = DateTime.Now;
+
+        using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.SavingsPlans.Add(model);
+
+            _db.SavingsEntries.AddRange(model.SavingsEntries);
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
 
-    private Task<bool> UpdateSavingsPlanAsync(SavingsPlanDTO dto)
+    private async Task<bool> UpdateSavingsPlanAsync(SavingsPlanDTO dto)
     {
-        // TODO: implement UpdateSavingsPlanAsync()
-        throw new NotImplementedException();
+        var oldPlan = (await GetSavingsPlanAsync(dto.Id))?.ToSavingsPlanModel();
+        if (oldPlan is null)
+        {
+            return false;
+        }
+
+        var newPlan = dto.ToSavingsPlanModel();
+
+        oldPlan.Name = newPlan.Name;
+        oldPlan.Description = newPlan.Description;
+        oldPlan.DateModified = DateTime.Now;
+
+        if (oldPlan.SavingsEntries!.Count > 0)
+        {
+            if (newPlan.SavingsEntries.Count > 0)
+            {
+                var entriesToDelete = oldPlan.SavingsEntries.Except(newPlan.SavingsEntries)
+                                                          .ToList();
+                entriesToDelete.ForEach(x => oldPlan.SavingsEntries.Remove(x));
+
+                var entriesToAdd = newPlan.SavingsEntries.Except(oldPlan.SavingsEntries)
+                                                       .ToList();
+                oldPlan.SavingsEntries.AddRange(entriesToAdd);
+            }
+            else
+            {
+                oldPlan.SavingsEntries.Clear();
+            }
+        }
+        else
+        {
+            if (newPlan.SavingsEntries.Count > 0)
+            {
+                oldPlan.SavingsEntries.AddRange(newPlan.SavingsEntries);
+            }
+        }
+
+        using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.Entry(oldPlan).State = EntityState.Modified;
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
 
-    public Task<bool> DeleteSavingsPlanAsync(int id)
+    public async Task<bool> DeleteSavingsPlanAsync(int id)
     {
-        // TODO: implement DeleteSavingsPlanAsync()
-        throw new NotImplementedException();
+        using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            var plan = await _db.SavingsPlans
+                .Include(s => s.SavingsEntries)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
+            if (plan is null)
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
+
+            _db.SavingsEntries.RemoveRange(plan.SavingsEntries);
+
+            _db.SavingsPlans.Remove(plan);
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
     #endregion
 }
