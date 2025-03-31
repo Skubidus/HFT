@@ -80,6 +80,7 @@ public class EFCoreData : IEFCoreData
     private async Task<bool> CreateFinancialPlanAsync(FinancialPlanDTO dto)
     {
         var model = dto.ToFinancialPlanModel();
+
         model.DateCreated = DateTime.Now;
         model.DateModified = DateTime.Now;
 
@@ -88,44 +89,12 @@ public class EFCoreData : IEFCoreData
         {
             _db.FinancialPlans.Add(model);
 
-            if (model.BankAccounts is not null)
-            {
-                model.BankAccounts.ForEach(x =>
-                {
-                    x.DateCreated = DateTime.Now;
-                    x.DateModified = DateTime.Now;
-                });
-
-                _db.BankAccounts.AddRange(model.BankAccounts);
-            }
-
-            if (model.Expenses is not null)
-            {
-                model.Expenses.ForEach(x =>
-                {
-                    x.DateCreated = DateTime.Now;
-                    x.DateModified = DateTime.Now;
-                });
-
-                _db.ExpenseEntries.AddRange(model.Expenses);
-            }
-
-            if (model.Incomes is not null)
-            {
-                model.Incomes.ForEach(x =>
-                {
-                    x.DateCreated = DateTime.Now;
-                    x.DateModified = DateTime.Now;
-                });
-
-                _db.IncomeEntries.AddRange(model.Incomes);
-            }
+            _db.BankAccounts.AddRange(model.BankAccounts);
+            _db.ExpenseEntries.AddRange(model.Expenses);
+            _db.IncomeEntries.AddRange(model.Incomes);
 
             if (model.SavingsPlan is not null)
             {
-                model.SavingsPlan.DateCreated = DateTime.Now;
-                model.SavingsPlan.DateModified = DateTime.Now;
-
                 _db.SavingsPlans.Add(model.SavingsPlan);
             }
 
@@ -141,15 +110,18 @@ public class EFCoreData : IEFCoreData
         }
     }
 
-    public async Task<bool> UpdateFinancialPlanAsync(FinancialPlanDTO dto)
+    private async Task<bool> UpdateFinancialPlanAsync(FinancialPlanDTO dto)
     {
         var oldPlan = (await GetFinancialPlanAsync(dto.Id))?.ToFinancialPlanModel();
         if (oldPlan is null)
         {
-            throw new InvalidOperationException($"Could not load financial plan with ID {dto.Id}");
+            return false;
         }
 
         var newPlan = dto.ToFinancialPlanModel();
+
+        oldPlan.Name = newPlan.Name;
+        oldPlan.Description = newPlan.Description;
         oldPlan.DateModified = DateTime.Now;
 
         if (oldPlan.BankAccounts!.Count > 0)
@@ -331,6 +303,7 @@ public class EFCoreData : IEFCoreData
     private async Task<bool> CreateBankAccountAsync(BankAccountDTO dto)
     {
         var model = dto.ToBankAccountModel();
+
         model.DateCreated = DateTime.Now;
         model.DateModified = DateTime.Now;
 
@@ -351,17 +324,21 @@ public class EFCoreData : IEFCoreData
         }
     }
 
-    private async Task<bool> UpdateBankAccountAsync(BankAccountDTO account)
+    private async Task<bool> UpdateBankAccountAsync(BankAccountDTO dto)
     {
-        // TODO: check implementation of UpdateBankAccountAsync()
-        var model = account.ToBankAccountModel();
-        var oldAccount = await _db.BankAccounts.FindAsync(account.Id);
+        var model = dto.ToBankAccountModel();
+        var oldAccount = await _db.BankAccounts.FindAsync(dto.Id);
         if (oldAccount is null)
         {
             return false;
         }
 
-        oldAccount.MapFromBankAccountModel(model);
+        oldAccount.Name = dto.Name;
+        oldAccount.Description = dto.Description;
+
+        oldAccount.IBAN = dto.IBAN;
+        oldAccount.BIC = dto.BIC;
+
         oldAccount.DateModified = DateTime.Now;
 
         return await _db.SaveChangesAsync() > 0;
@@ -417,17 +394,20 @@ public class EFCoreData : IEFCoreData
         return output;
     }
 
-    public Task<bool> CreateOrUpdateExpenseEntryAsync(ExpenseEntryDTO dto)
+    public async Task<bool> CreateOrUpdateExpenseEntryAsync(ExpenseEntryDTO dto)
     {
-        // TODO: implement CreateOrUpdateExpenseEntryAsync()
-        throw new NotImplementedException();
+        var isNewExpense = await _db.ExpenseEntries.FindAsync(dto.Id) is null;
+
+        return isNewExpense ? await CreateExpenseEntryAsync(dto)
+                            : await UpdateExpenseEntryAsync(dto);
     }
 
-    private async Task<bool> CreateExpenseEntryAsync(ExpenseEntryDTO entry)
+    private async Task<bool> CreateExpenseEntryAsync(ExpenseEntryDTO dto)
     {
-        var model = entry.ToExpenseEntryModel();
-        model.DateCreated = DateTime.Now;
-        model.DateModified = DateTime.Now;
+        var model = dto.ToExpenseEntryModel();
+
+        model.DateCreated = dto.DateCreated;
+        model.DateModified = dto.DateModified;
 
         using var transaction = await _db.Database.BeginTransactionAsync();
         try
@@ -436,9 +416,6 @@ public class EFCoreData : IEFCoreData
 
             if (model.AssociatedBankAccount is not null)
             {
-                model.AssociatedBankAccount.DateCreated = DateTime.Now;
-                model.AssociatedBankAccount.DateModified = DateTime.Now;
-
                 _db.BankAccounts.Add(model.AssociatedBankAccount);
             }
 
@@ -463,24 +440,37 @@ public class EFCoreData : IEFCoreData
         }
 
         var newEntry = dto.ToExpenseEntryModel();
-        newEntry.DateModified = DateTime.Now;
 
-        oldEntry.MapFromExpenseEntryModel(newEntry);
+        oldEntry.Name = newEntry.Name;
+        oldEntry.Description = newEntry.Description;
+
+        oldEntry.AssociatedBankAccount = newEntry.AssociatedBankAccount;
+        oldEntry.Price = newEntry.Price;
+
+        newEntry.DateModified = DateTime.Now;
 
         using var transaction = await _db.Database.BeginTransactionAsync();
         try
         {
-            _db.Entry(oldEntry.Name).State = EntityState.Modified;
-            _db.Entry(oldEntry.Description).State = EntityState.Modified;
-
-            _db.Entry(oldEntry.Price).State = EntityState.Modified;
-
             if (oldEntry.AssociatedBankAccount is not null)
             {
-                _db.Entry(oldEntry.AssociatedBankAccount).State = EntityState.Modified;
+                if (newEntry.AssociatedBankAccount is null)
+                {
+                    oldEntry.AssociatedBankAccount = null;
+                    _db.Entry(oldEntry.AssociatedBankAccount!).State = EntityState.Detached;
+                }
+                else
+                {
+                    oldEntry.AssociatedBankAccount = newEntry.AssociatedBankAccount;
+                }
             }
-
-            _db.Entry(oldEntry.DateModified).State = EntityState.Modified;
+            else
+            {
+                if (newEntry.AssociatedBankAccount is not null)
+                {
+                    oldEntry.AssociatedBankAccount = newEntry.AssociatedBankAccount;
+                }
+            }
 
             _db.Entry(oldEntry).State = EntityState.Modified;
 
@@ -498,8 +488,27 @@ public class EFCoreData : IEFCoreData
 
     public async Task<bool> DeleteExpenseEntryAsync(int id)
     {
-        // TODO: implement DeleteExpenseEntryAsync()
-        throw new NotImplementedException();
+        var entry = await _db.ExpenseEntries.FindAsync(id);
+        if (entry is null)
+        {
+            return false;
+        }
+
+        var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.ExpenseEntries.Remove(entry);
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
     #endregion
 
