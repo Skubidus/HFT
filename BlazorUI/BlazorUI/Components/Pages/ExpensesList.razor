@@ -1,4 +1,5 @@
 ﻿@using System.Diagnostics
+@using BlazorUI.ViewModels
 @using HFTLibrary.Data
 @using HFTLibrary.Models
 @using SessionData
@@ -73,9 +74,8 @@
 
 @code
 {
-    // private FinancialPlanModel? _financialPlan = null;
     [Parameter]
-    public FinancialPlanModel FinancialPlan { get; init; }
+    public FinancialPlanViewModel FinancialPlan { get; init; }
     private bool _showDeleteConfirmDialog = false;
 
     private void OnModifyExpenseButtonClick(int expenseId)

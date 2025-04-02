@@ -1,6 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 
+@using BlazorUI.ViewModels
 @using HFTLibrary.Data
 @using SessionData
 
@@ -49,11 +50,13 @@
 
 @code
 {
-    private IEnumerable<(int Id, string Name)>? _financialPlans;
+    private List<FinancialPlanLazyViewModel>? _financialPlans = [];
 
     protected override async Task OnInitializedAsync()
     {
-        _financialPlans = await _db.GetFinancialPlanListLazyAsync();
+        var dtos = await _db.GetFinancialPlanListLazyAsync();
+        dtos.ForEach(x => _financialPlans!.Add(x.ToFinancialPlanLazyViewModel()));
+
         await base.OnInitializedAsync();
     }
 

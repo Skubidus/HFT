@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 
 @using System.Diagnostics
+@using BlazorUI.ViewModels
 @using HFTLibrary.Data
 @using HFTLibrary.Models
 @using SessionData
@@ -91,12 +92,12 @@
 </div>
 
 @code {
-    private FinancialPlanModel? _financialPlan = null;
+    private FinancialPlanViewModel? _financialPlan = null;
     private bool _showDeleteConfirmDialog = false;
 
     protected override async Task OnInitializedAsync()
     {
-        _financialPlan = await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId);
+        _financialPlan = (await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId))?.ToFinancialPlanViewModel();
     }
 
     private void OnModifyExpenseButtonClick(int expenseId)

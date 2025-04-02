@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 
 @using System.Diagnostics
+@using BlazorUI.ViewModels
 @using HFTLibrary.Data
 @using HFTLibrary.Logic
 @using HFTLibrary.Models
@@ -129,8 +130,8 @@
 </div>
 
 @code {
-    private FinancialPlanModel? _financialPlan = null;
-    private ExpenseEntryModel? _expense = null;
+    private FinancialPlanViewModel? _financialPlan = null;
+    private ExpenseEntryViewModel? _expense = null;
     private bool _showDeleteConfirmDialog = false;
 
     [Parameter]
@@ -138,20 +139,18 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _financialPlan = await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId);
+        _financialPlan = (await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId))?.ToFinancialPlanViewModel();
 
         if (_financialPlan is null)
         {
             throw new InvalidOperationException("Financial plan not found.");
         }
 
-        var tempExpense = _financialPlan.Expenses.SingleOrDefault(x => x.Id == Id);
-        if (tempExpense is null)
+        _expense = _financialPlan.Expenses.SingleOrDefault(x => x.Id == Id);
+        if (_expense is null)
         {
             throw new InvalidOperationException($"Expense with ID {Id} not found.");
         }
-
-        _expense = HelperMethods.CloneJson<ExpenseEntryModel>(tempExpense);
     }
 
     private async Task HandleValidSubmitAsync()
@@ -165,7 +164,7 @@
         }
 
         _expense.DateModified = DateTime.Now;
-        await _db.UpdateExpenseEntryAsync(_expense);
+        await _db.CreateOrUpdateExpenseEntryAsync(_expense.ToExpenseEntryDTO());
     }
 
     private void OnDeleteButtonClick()

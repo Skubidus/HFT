@@ -1,8 +1,12 @@
 ﻿@page "/Edit/FinancialPlan/{Id:int}"
+@rendermode InteractiveServer
+
 @using System.Diagnostics
+@using BlazorUI.ViewModels
 @using HFTLibrary.Data
 @using HFTLibrary.Models
-@rendermode InteractiveServer
+@using HFTLibrary.DTOs
+@using HFTLibrary.Logic
 
 @inject IEFCoreData _db;
 
@@ -215,7 +219,7 @@
                                 </div>
                             </div>
 
-          @*                   <div class="row my-2">
+                            @*                   <div class="row my-2">
                                 <div class="col-4">
                                     <label>Betrag:</label>
                                 </div>
@@ -365,14 +369,14 @@
 
 
 @code {
-    private FinancialPlanModel? _financialPlan = null;
+    private FinancialPlanViewModel? _financialPlan = null;
 
     [Parameter]
     public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        _financialPlan = await _db.GetFinancialPlanAsync(Id);
+        _financialPlan = (await _db.GetFinancialPlanAsync(Id))?.ToFinancialPlanViewModel();
     }
 
     private void HandleSubmit()

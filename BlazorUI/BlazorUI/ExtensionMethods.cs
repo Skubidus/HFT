@@ -87,6 +87,24 @@ public static class ExtensionMethods
         };
     }
 
+    public static FinancialPlanLazyViewModel ToFinancialPlanLazyViewModel(this FinancialPlanLazyDTO dto)
+    {
+        return new FinancialPlanLazyViewModel
+        {
+            Id = dto.Id,
+            Name = dto.Name
+        };
+    }
+
+    public static FinancialPlanLazyDTO ToFinancialPlanLazyDTO(this FinancialPlanLazyViewModel model)
+    {
+        return new FinancialPlanLazyDTO
+        {
+            Id = model.Id,
+            Name = model.Name
+        };
+    }
+
     // expense entry
     public static ExpenseEntryViewModel ToExpenseEntryViewModel(this ExpenseEntryDTO dto)
     {

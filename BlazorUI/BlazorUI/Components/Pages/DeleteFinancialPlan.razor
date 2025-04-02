@@ -1,5 +1,7 @@
 ﻿@using HFTLibrary.Data
 @using HFTLibrary.Models
+@using HFTLibrary.DTOs
+@using HFTLibrary.Logic
 @using SessionData
 
 @inject IEFCoreData _db;
@@ -38,14 +40,14 @@
 
 @code
 {
-    private FinancialPlanModel? _financialPlan;
+    private FinancialPlanDTO? _financialPlan;
 
     [Parameter]
     public EventCallback<bool> OnDialogClosed { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        _financialPlan = await _db.GetFinancialPlanLazyAsync(_session.SelectedFinancialPlanId);
+        _financialPlan = await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId);
     }
 
     private async Task HandleButtonClickAsync(bool doDelete)

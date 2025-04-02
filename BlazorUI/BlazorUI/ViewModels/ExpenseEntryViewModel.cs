@@ -14,6 +14,12 @@ public class ExpenseEntryViewModel
 
     [Range(0, 99999999.99)]
     public required decimal Price { get; set; }
+    public string PriceString
+    {
+        get => Price.ToString("N2");
+        set => Price = decimal.Parse(value.Replace(".", "").Replace(",", "."));
+    }
+
     public BankAccountViewModel? AssociatedBankAccount { get; set; }
     public required DateTime DateCreated { get; set; }
     public required DateTime DateModified { get; set; }
