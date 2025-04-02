@@ -1,8 +1,7 @@
-﻿using BlazorUI.ViewModels;
+﻿using BlazorUI.Components.Pages;
+using BlazorUI.ViewModels;
 
 using HFTLibrary.DTOs;
-
-using System.Runtime.CompilerServices;
 
 namespace BlazorUI;
 
@@ -38,6 +37,55 @@ public static class ExtensionMethods
     }
 
     // financial plan
+    public static FinancialPlanViewModel ToFinancialPlanViewModel(this FinancialPlanDTO dto)
+    {
+        List<BankAccountViewModel> bankAccounts = [];
+        dto.BankAccounts.ToList().ForEach(x => bankAccounts.Add(x.ToBankAccountViewModel()));
+
+        List<ExpenseEntryViewModel> expenses = [];
+        dto.Expenses.ToList().ForEach(x => expenses.Add(x.ToExpenseEntryViewModel()));
+
+        List<IncomeEntryViewModel> incomes = [];
+        dto.Incomes.ToList().ForEach(x => incomes.Add(x.ToIncomeEntryViewModel()));
+
+        return new FinancialPlanViewModel
+        {
+            Id = dto.Id,
+            Name = dto.Name,
+            Description = dto.Description,
+            BankAccounts = bankAccounts,
+            Expenses = expenses,
+            Incomes = incomes,
+            SavingsPlan = dto.SavingsPlan?.ToSavingsPlanViewModel(),
+            DateCreated = dto.DateCreated,
+            DateModified = dto.DateModified
+        };
+    }
+
+    public static FinancialPlanDTO ToFinancialPlanDTO(this FinancialPlanViewModel model)
+    {
+        List<BankAccountDTO> bankAccounts = [];
+        model.BankAccounts.ToList().ForEach(x => bankAccounts.Add(x.ToBankAccountDTO()));
+
+        List<ExpenseEntryDTO> expenses = [];
+        model.Expenses.ToList().ForEach(x => expenses.Add(x.ToExpenseEntryDTO()));
+
+        List<IncomeEntryDTO> incomes = [];
+        model.Incomes.ToList().ForEach(x => incomes.Add(x.ToIncomeEntryDTO()));
+
+        return new FinancialPlanDTO
+        {
+            Id = model.Id,
+            Name = model.Name,
+            Description = model.Description,
+            BankAccounts = bankAccounts,
+            Expenses = expenses,
+            Incomes = incomes,
+            SavingsPlan = model.SavingsPlan?.ToSavingsPlanDTO(),
+            DateCreated = model.DateCreated,
+            DateModified = model.DateModified
+        };
+    }
 
     // expense entry
     public static ExpenseEntryViewModel ToExpenseEntryViewModel(this ExpenseEntryDTO dto)
@@ -114,7 +162,7 @@ public static class ExtensionMethods
         return new SavingsEntryDTO
         {
             Id = model.Id,
-            Name= model.Name,
+            Name = model.Name,
             Description = model.Description,
             Price = model.Price,
             DateCreated = model.DateCreated,
