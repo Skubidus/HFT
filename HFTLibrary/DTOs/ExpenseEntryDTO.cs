@@ -9,11 +9,11 @@ public record ExpenseEntryDTO
     [StringLength(100)]
     public required string Name { get; init; }
 
-    [Range(0, 99999999.99)]
-    public required decimal Price { get; init; }
-
     [StringLength(500)]
     public string Description { get; init; } = string.Empty;
+
+    [Range(0, 99999999.99)]
+    public required decimal Price { get; init; }
     public BankAccountDTO? AssociatedBankAccount { get; init; }
     public required DateTime DateCreated { get; init; }
     public required DateTime DateModified { get; init; }
