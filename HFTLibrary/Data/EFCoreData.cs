@@ -19,12 +19,11 @@ public class EFCoreData : IEFCoreData
     public async Task<FinancialPlanDTO?> GetFinancialPlanAsync(int id)
     {
         var plan = await _db.FinancialPlans
-            .Include(s => s.SavingsPlan)
-            .Include(b => b.BankAccounts)
-            .Include(i => i.Incomes)
-            .Include(e => e.Expenses)
-            .Where(p => p.Id == id)
-            .SingleOrDefaultAsync();
+            .Include(x => x.SavingsPlan)
+            .Include(x => x.BankAccounts)
+            .Include(x => x.Incomes)
+            .Include(x => x.Expenses)
+            .SingleOrDefaultAsync(x => x.Id == id);
 
         return plan?.ToFinancialPlanDTO();
     }
@@ -112,7 +111,7 @@ public class EFCoreData : IEFCoreData
 
     private async Task<bool> UpdateFinancialPlanAsync(FinancialPlanDTO dto)
     {
-        var oldPlan = (await GetFinancialPlanAsync(dto.Id))?.ToFinancialPlanModel();
+        var oldPlan = await _db.FinancialPlans.FindAsync(dto.Id);
         if (oldPlan is null)
         {
             return false;
@@ -124,7 +123,7 @@ public class EFCoreData : IEFCoreData
         oldPlan.Description = newPlan.Description;
         oldPlan.DateModified = DateTime.Now;
 
-        if (oldPlan.BankAccounts!.Count > 0)
+        if (oldPlan.BankAccounts.Count > 0)
         {
             if (newPlan.BankAccounts.Count > 0)
             {
@@ -203,8 +202,8 @@ public class EFCoreData : IEFCoreData
         {
             if (newPlan.SavingsPlan is null)
             {
+                _db.Entry(oldPlan.SavingsPlan).State = EntityState.Detached;
                 oldPlan.SavingsPlan = null;
-                _db.Entry(oldPlan.SavingsPlan!).State = EntityState.Detached;
             }
             else
             {
@@ -327,6 +326,7 @@ public class EFCoreData : IEFCoreData
     private async Task<bool> UpdateBankAccountAsync(BankAccountDTO dto)
     {
         var model = dto.ToBankAccountModel();
+
         var oldAccount = await _db.BankAccounts.FindAsync(dto.Id);
         if (oldAccount is null)
         {
@@ -377,7 +377,7 @@ public class EFCoreData : IEFCoreData
     {
         var output = await _db.ExpenseEntries
             .Include(x => x.AssociatedBankAccount)
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync(x => x.Id == id);
 
         return output?.ToExpenseEntryDTO();
     }
@@ -433,7 +433,7 @@ public class EFCoreData : IEFCoreData
 
     private async Task<bool> UpdateExpenseEntryAsync(ExpenseEntryDTO dto)
     {
-        var oldEntry = (await GetExpenseEntryAsync(dto.Id))?.ToExpenseEntryModel();
+        var oldEntry = await _db.ExpenseEntries.FindAsync(dto.Id);
         if (oldEntry is null)
         {
             return false;
@@ -444,7 +444,6 @@ public class EFCoreData : IEFCoreData
         oldEntry.Name = newEntry.Name;
         oldEntry.Description = newEntry.Description;
 
-        oldEntry.AssociatedBankAccount = newEntry.AssociatedBankAccount;
         oldEntry.Price = newEntry.Price;
 
         newEntry.DateModified = DateTime.Now;
@@ -456,11 +455,12 @@ public class EFCoreData : IEFCoreData
             {
                 if (newEntry.AssociatedBankAccount is null)
                 {
+                    _db.Entry(oldEntry.AssociatedBankAccount).State = EntityState.Detached;
                     oldEntry.AssociatedBankAccount = null;
-                    _db.Entry(oldEntry.AssociatedBankAccount!).State = EntityState.Detached;
                 }
-                else
+                else if (newEntry.AssociatedBankAccount.Id != oldEntry.AssociatedBankAccount.Id)
                 {
+                    _db.Entry(oldEntry.AssociatedBankAccount).State = EntityState.Detached;
                     oldEntry.AssociatedBankAccount = newEntry.AssociatedBankAccount;
                 }
             }
@@ -564,7 +564,7 @@ public class EFCoreData : IEFCoreData
 
     private async Task<bool> UpdateIncomeEntryAsync(IncomeEntryDTO dto)
     {
-        var oldEntry = (await GetIncomeEntryAsync(dto.Id))?.ToIncomeModel();
+        var oldEntry = await _db.IncomeEntries.FindAsync(dto.Id);
         if (oldEntry is null)
         {
             return false;
@@ -674,7 +674,7 @@ public class EFCoreData : IEFCoreData
 
     private async Task<bool> UpdateSavingsEntryAsync(SavingsEntryDTO dto)
     {
-        var oldEntry = (await GetSavingsEntryAsync(dto.Id))?.ToSavingsEntryModel();
+        var oldEntry = await _db.SavingsEntries.FindAsync(dto.Id);
         if (oldEntry is null)
         {
             return false;
@@ -739,8 +739,7 @@ public class EFCoreData : IEFCoreData
     {
         var plan = await _db.SavingsPlans
             .Include(s => s.SavingsEntries)
-            .Where(x => x.Id == id)
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync(x => x.Id == id);
 
         return plan?.ToSavingsPlanDTO();
     }
@@ -793,7 +792,7 @@ public class EFCoreData : IEFCoreData
 
     private async Task<bool> UpdateSavingsPlanAsync(SavingsPlanDTO dto)
     {
-        var oldPlan = (await GetSavingsPlanAsync(dto.Id))?.ToSavingsPlanModel();
+        var oldPlan = await _db.SavingsPlans.FindAsync(dto.Id);
         if (oldPlan is null)
         {
             return false;
@@ -805,7 +804,7 @@ public class EFCoreData : IEFCoreData
         oldPlan.Description = newPlan.Description;
         oldPlan.DateModified = DateTime.Now;
 
-        if (oldPlan.SavingsEntries!.Count > 0)
+        if (oldPlan.SavingsEntries.Count > 0)
         {
             if (newPlan.SavingsEntries.Count > 0)
             {

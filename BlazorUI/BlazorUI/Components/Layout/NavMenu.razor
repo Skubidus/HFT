@@ -1,10 +1,13 @@
 ﻿@using SessionData
 
+@inject IConfiguration _config;
 @inject SessionData _session;
 
-<div class="top-row ps-3 navbar navbar-dark">
+<div class="top-row navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">BlazorUI</a>
+        <div class="col text-center">
+            <a class="navbar-brand" href="">@_config["AppFullName"]</a>
+        </div>
     </div>
 </div>
 

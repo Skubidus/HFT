@@ -1,10 +1,8 @@
 ﻿@page "/Expenses"
 @rendermode InteractiveServer
 
-@using System.Diagnostics
 @using BlazorUI.ViewModels
 @using HFTLibrary.Data
-@using HFTLibrary.Models
 @using SessionData
 
 @inject IEFCoreData _db;
@@ -12,13 +10,21 @@
 @inject SessionData _session;
 @inject IConfiguration _config;
 
-<PageTitle>@_config["AppShortName"] - Ausgaben</PageTitle>
+<PageTitle>@_config["AppShortName"] - @_financialPlan?.Name - Ausgaben</PageTitle>
 
-<div class="container mb-4">
-    <div class="row">
-        <h3>Ausgaben</h3>
+<div class="container-fluid border-bottom border-1 mb-3 px-0">
+    <div class="row mx-0 mb-3">
+        <div class="col p-0">
+            <h3 class="mb-0 mt-1">Ausgaben</h3>
+        </div>
+
+        <div class="col-auto p-0 text-end">
+            <div class="col-auto bi bi-plus-lg btn btn-outline-secondary py-2" title="Neue Ausgabe hinzufügen" @onclick="OnAddExpenseButtonClick" />
+        </div>
     </div>
+</div>
 
+<div class="container-fluid mb-4 px-0">
     @if (_financialPlan is null)
     {
         <div class="row">
@@ -34,64 +40,90 @@
     else
     {
         <div class="row">
-            <div class="row card">
-                <div class="col">
+            <div class="col">
 
-                    <div class="row my-2">
-                        <div class="col-1">
-                            <label>Pos.</label>
-                        </div>
+                <div class="card">
+                    <div class="card-header py-1">
 
-                        <div class="col">
-                            <label>Bezeichnung</label>
-                        </div>
-
-                        <div class="col-3">
-                            <label>Konto</label>
-                        </div>
-
-                        <div class="col-2">
-                            <label>Betrag</label>
-                        </div>
-
-                        <div class="col-1">
-                            <label>&nbsp;</label>
-                        </div>
-                    </div>
-
-                    @for (int i = 0; i < _financialPlan.Expenses.Count; i++)
-                    {
-                        var expense = _financialPlan.Expenses[i];
-
-                        <div class="row align-items-center border-top border-bottom border-1">
+                        <div class="row fw-bold my-2">
                             <div class="col-1">
-                                <label>@(i + 1)</label>
+                                <label>Pos.</label>
                             </div>
 
                             <div class="col">
-                                <label>@expense.Name</label>
+                                <label>Bezeichnung</label>
                             </div>
 
                             <div class="col-3">
-                                <label>@expense.AssociatedBankAccount?.Name</label>
+                                <label>Konto</label>
                             </div>
 
                             <div class="col-2">
-                                <label>@expense.PriceString</label>
+                                <label>Betrag</label>
                             </div>
 
-                            <div class="col-1 bi bi-three-dots-vertical btn" title="Einkommen bearbeiten" @onclick="@(() => OnModifyExpenseButtonClick(expense.Id))" />
+                            <div class="col-1">
+                                <label>&nbsp;</label>
+                            </div>
                         </div>
-                    }
+                    </div>
+
+                    <div class="card-body py-0">
+                        @for (int i = 0; i < _financialPlan.Expenses.Count; i++)
+                        {
+                            var expense = _financialPlan.Expenses[i];
+                            string rowClass = string.Empty;
+
+                            @if (i < _financialPlan.Expenses.Count - 1)
+                            {
+                                rowClass = "row align-items-center border-bottom border-1";
+                            }
+                            else
+                            {
+                                rowClass = "row align-items-center";
+                            }
+
+                            <div class="@rowClass">
+                                <div class="col-1">
+                                    <label>@(i + 1)</label>
+                                </div>
+
+                                <div class="col">
+                                    <label>@expense.Name</label>
+                                </div>
+
+                                <div class="col-3">
+                                    <label>@expense.AssociatedBankAccount?.Name</label>
+                                </div>
+
+                                <div class="col-2">
+                                    <label>@expense.PriceString €</label>
+                                </div>
+
+                                <div class="col-1 bi bi-three-dots-vertical btn" title="Einkommen bearbeiten" @onclick="@(() => OnModifyExpenseButtonClick(expense.Id))" />
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="row fw-bold">
+                            <div class="col-3 offset-6 text-end">
+                                <label>Summe:</label>
+                            </div>
+                            <div class="col-3">
+                                <label>@_financialPlan.Expenses.Sum(x => x.Price).ToString("N2") €</label>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
         </div>
     }
-
 </div>
 
-@code {
+@code
+{
     private FinancialPlanViewModel? _financialPlan = null;
     private bool _showDeleteConfirmDialog = false;
 
@@ -102,7 +134,11 @@
 
     private void OnModifyExpenseButtonClick(int expenseId)
     {
-        Debug.WriteLine($"In {nameof(OnModifyExpenseButtonClick)}() - {expenseId}");
         _nav.NavigateTo($"/ModifyExpense/{expenseId}");
+    }
+
+    private void OnAddExpenseButtonClick()
+    {
+        
     }
 }

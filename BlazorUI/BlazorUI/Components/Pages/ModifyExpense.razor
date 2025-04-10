@@ -4,8 +4,6 @@
 @using System.Diagnostics
 @using BlazorUI.ViewModels
 @using HFTLibrary.Data
-@using HFTLibrary.Logic
-@using HFTLibrary.Models
 @using SessionData
 
 @inject IEFCoreData _db;
@@ -15,11 +13,15 @@
 
 <PageTitle>@_config["AppShortName"] - Ausgabe bearbeiten</PageTitle>
 
-<div class="container mb-4">
-    <div class="row">
-        <h3>Einkommen bearbeiten</h3>
+<div class="container-fluid border-bottom border-1 mb-3 px-0">
+    <div class="row mx-0 mb-3">
+        <div class="col p-0">
+            <h3 class="mb-1 mt-1">Ausgabe bearbeiten</h3>
+        </div>
     </div>
+</div>
 
+<div class="container-fluid mb-4 px-0">
     @if (_financialPlan is null)
     {
         <div class="row">
@@ -41,89 +43,96 @@
     else
     {
         <div class="row">
-            <EditForm Model="@_expense" OnSubmit="HandleValidSubmitAsync" FormName="ExpenseForm">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+            <div class="col">
 
-                <div class="row card">
+                <EditForm Model="@_expense" OnSubmit="HandleValidSubmitAsync" FormName="ExpenseForm">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-                    <div class="card-body d-flex flex-row justify-content-end align-items-start">
-                        <div class="col-auto bi bi-trash btn btn-outline-danger py-2" title="Ausgabe löschen" @onclick="OnDeleteButtonClick" />
+                    <div class="card">
+
+                        <div class="card-body py-0">
+
+                            <div class="row justify-content-end mt-2 pe-1">
+                                <div class="col-auto bi bi-trash btn btn-outline-danger py-2 mt-1 me-2" title="Ausgabe löschen" @onclick="OnDeleteButtonClick" />
+                            </div>
+
+                            <div class="row">
+                                <div class="container">
+
+                                    <div class="row my-2">
+                                        <div class="col-4">
+                                            <label>ID:</label>
+                                        </div>
+                                        <div class="col">
+                                            <span>@_expense?.Id</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row my-2">
+                                        <div class="col-4">
+                                            <label>Name:</label>
+                                        </div>
+                                        <div class="col">
+                                            <InputText @bind-Value="@_expense!.Name" class="w-100" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row my-2">
+                                        <div class="col-4">
+                                            <label>Beschreibung:</label>
+                                        </div>
+                                        <div class="col">
+                                            <InputText @bind-Value="@_expense.Description" class="w-100" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row my-2">
+                                        <div class="col-4">
+                                            <label>Betrag:</label>
+                                        </div>
+                                        <div class="col">
+                                            <InputText @bind-Value="@_expense.PriceString" class="w-100" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row my-2">
+                                        <div class="col-4">
+                                            <label>Erstellt am:</label>
+                                        </div>
+                                        <div class="col">
+                                            <span>@_expense.DateCreated.ToShortDateString() - @_expense.DateCreated.ToLongTimeString() Uhr</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row my-2">
+                                        <div class="col-4">
+                                            <label>Zuletzt bearbeitet am:</label>
+                                        </div>
+                                        <div class="col">
+                                            <span>@_expense.DateModified.ToShortDateString() - @_expense.DateModified.ToLongTimeString() Uhr</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
 
-                    <div class="col">
+                    <div class="container my-2 mt-3 border-top border-1 px-0">
+                        <div class="row mt-3 justify-content-end">
+                            <div class="col-auto">
+                                <a href="/Expenses" class="btn btn-outline-secondary px-4">Abbrechen</a>
+                            </div>
 
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>ID:</label>
-                            </div>
-                            <div class="col">
-                                <span>@_expense?.Id</span>
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Name:</label>
-                            </div>
-                            <div class="col">
-                                <InputText @bind-Value="@_expense!.Name" class="w-100" />
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Beschreibung:</label>
-                            </div>
-                            <div class="col">
-                                <InputText @bind-Value="@_expense.Description" class="w-100" />
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Betrag:</label>
-                            </div>
-                            <div class="col">
-                                <InputText @bind-Value="@_expense.PriceString" class="w-100" />
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Erstellt am:</label>
-                            </div>
-                            <div class="col">
-                                <span>@_expense.DateCreated.ToShortDateString() - @_expense.DateCreated.ToLongTimeString() Uhr</span>
-                            </div>
-                        </div>
-
-                        <div class="row my-2">
-                            <div class="col-4">
-                                <label>Zuletzt bearbeitet am:</label>
-                            </div>
-                            <div class="col">
-                                <span>@_expense.DateModified.ToShortDateString() - @_expense.DateModified.ToLongTimeString() Uhr</span>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-outline-primary px-4">Speichern</button>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <hr class="my-4" />
-                </div>
-
-                <div class="row my-2">
-                    <div class="col" />
-                    <div class="col-auto ">
-                        <a href="/Expenses" class="btn btn-outline-secondary px-4">Abbrechen</a>
-                    </div>
-                    <div class="col-auto ">
-                        <button type="submit" class="btn btn-outline-primary px-4">Speichern</button>
-                    </div>
-                </div>
-
-            </EditForm>
+                </EditForm>
+            </div>
         </div>
     }
 
@@ -155,8 +164,6 @@
 
     private async Task HandleValidSubmitAsync()
     {
-        Debug.WriteLine($"In {nameof(HandleValidSubmitAsync)}()");
-
         if (_financialPlan is null
         || _expense is null)
         {
@@ -169,7 +176,6 @@
 
     private void OnDeleteButtonClick()
     {
-        Debug.WriteLine($"In {nameof(OnDeleteButtonClick)}()");
         _showDeleteConfirmDialog = true;
     }
 

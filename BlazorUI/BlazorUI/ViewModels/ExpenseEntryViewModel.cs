@@ -4,6 +4,7 @@ namespace BlazorUI.ViewModels;
 
 public class ExpenseEntryViewModel
 {
+
     public int Id { get; init; }
 
     [StringLength(100)]
@@ -13,11 +14,18 @@ public class ExpenseEntryViewModel
     public string Description { get; set; } = string.Empty;
 
     [Range(0, 99999999.99)]
-    public required decimal Price { get; set; }
+    public required decimal Price { get => _price; set => _price = value; }
+    private decimal _price;
+
     public string PriceString
     {
         get => Price.ToString("N2");
-        set => Price = decimal.Parse(value.Replace(".", "").Replace(",", "."));
+        set
+        {
+            value = value.Replace(".", "");
+            _ = decimal.TryParse(value, out _price);
+        }
+
     }
 
     public BankAccountViewModel? AssociatedBankAccount { get; set; }
