@@ -1,0 +1,119 @@
+﻿@page "/AddFinancialPlan"
+@rendermode InteractiveServer
+
+@using System.Diagnostics
+@using BlazorUI.ViewModels
+@using HFTLibrary.Data
+@using SessionData
+
+@inject IEFCoreData _db;
+@inject SessionData _session;
+@inject IConfiguration _config;
+@inject NavigationManager _nav;
+
+<PageTitle>@_config["AppShortName"] - Finanzplan hinzufügen</PageTitle>
+
+<div class="container-fluid border-bottom border-1 mb-3 px-0">
+    <div class="row mx-0 mb-3">
+        <div class="col p-0">
+            <h3 class="mb-1 mt-1">Neuen Finanzplan hinzufügen</h3>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mb-4 px-0">
+
+    <div class="row">
+        <div class="col">
+
+            <EditForm Model="@_financialPlan" OnSubmit="HandleValidSubmitAsync" FormName="FinancialPlanForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="container">
+
+                                <div class="row my-2">
+                                    <div class="col-4">
+                                        <label>Name:</label>
+                                    </div>
+                                    <div class="col">
+                                        <InputText @bind-Value="@_financialPlan!.Name" class="w-100" />
+                                    </div>
+                                </div>
+
+                                <div class="row my-2">
+                                    <div class="col-4">
+                                        <label>Beschreibung:</label>
+                                    </div>
+                                    <div class="col">
+                                        <InputText @bind-Value="@_financialPlan!.Description" class="w-100" />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="container my-2 mt-3 border-top border-1 px-0">
+                    <div class="row mt-3 justify-content-end">
+                        <div class="col-auto">
+                            <a href="/" class="btn btn-outline-secondary px-4">Abbrechen</a>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-outline-primary px-4">Speichern</button>
+                        </div>
+                    </div>
+                </div>
+
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private FinancialPlanViewModel? _financialPlan = null;
+    private bool _showDeleteConfirmDialog = false;
+
+    protected override void OnInitialized()
+    {
+        _financialPlan = new()
+        {
+            Name = string.Empty,
+            DateCreated = DateTime.Now,
+            DateModified = DateTime.Now
+        };
+    }
+
+    private async Task HandleValidSubmitAsync()
+    {
+        if (_financialPlan is null
+        || string.IsNullOrWhiteSpace(_financialPlan.Name))
+        {
+            return;
+        }
+
+        _financialPlan.DateCreated = DateTime.Now;
+        _financialPlan.DateModified = DateTime.Now;
+
+        await _db.CreateOrUpdateFinancialPlanAsync(_financialPlan.ToFinancialPlanDTO());
+        _nav.NavigateTo($"/");
+    }
+
+    private void OnDeleteButtonClick()
+    {
+        _showDeleteConfirmDialog = true;
+    }
+
+    private void OnDialogClosed()
+    {
+        _showDeleteConfirmDialog = false;
+        StateHasChanged();
+    }
+}

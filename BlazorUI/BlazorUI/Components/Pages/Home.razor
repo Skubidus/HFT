@@ -1,6 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 
+@using BlazorUI.Components.Pages.FinancialPlans
 @using BlazorUI.ViewModels
 @using HFTLibrary.Data
 @using SessionData
@@ -14,12 +15,12 @@
 
 <div class="container-fluid border-bottom border-1 mb-3 px-0">
     <div class="row mx-0 mb-3">
-        <div class="col p-0 text-center">
+        <div class="col p-0">
             <h3 class="mb-0 mt-1">Finanzpläne</h3>
         </div>
 
         <div class="col-auto p-0 text-end">
-            <div class="col-auto bi bi-plus-lg btn btn-outline-secondary py-2" title="Neue Ausgabe hinzufügen" @onclick="OnAddFinancialPlanButtonClick" />
+            <a href="/@nameof(AddFinancialPlan)" class="col-auto bi bi-plus-lg btn btn-outline-secondary py-2" title="Neuen Finanzplan hinzufügen"></a>
         </div>
     </div>
 </div>
@@ -99,19 +100,9 @@
         await base.OnInitializedAsync();
     }
 
-    private void OnAddFinancialPlanButtonClick()
-    {
-        
-    }
-
-    private void OnModifyFinancialPlanButtonClick(int id)
-    {
-        
-    }
-
     private void HandleClick(int id)
     {
         _session.SelectedFinancialPlanId = id;
-        _nav.NavigateTo($"/FinancialPlanData");
+        _nav.NavigateTo($"/{nameof(EditFinancialPlan)}");
     }
 }
