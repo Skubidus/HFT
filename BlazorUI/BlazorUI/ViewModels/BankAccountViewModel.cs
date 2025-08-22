@@ -20,13 +20,17 @@ public class BankAccountViewModel
             var length = _iban.Length;
             for (int i = 0; i < length; i += 4)
             {
+                if (i == 0)
+                {
+                    continue;
+                }
                 output = output.Insert(i, " ");
                 i++;
                 length++;
             }
             return output;
         }
-        set => _iban = value;
+        set => _iban = value.Replace(" ", "");
     }
 
     [StringLength(20)]

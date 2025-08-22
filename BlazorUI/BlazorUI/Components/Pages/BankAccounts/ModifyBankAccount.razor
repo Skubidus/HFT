@@ -1,4 +1,4 @@
-﻿@page "/ModifyExpense/{Id:int}"
+﻿@page "/ModifyBankAccount/{Id:int}"
 @rendermode InteractiveServer
 
 @using System.Diagnostics
@@ -11,12 +11,12 @@
 @inject SessionData _session;
 @inject IConfiguration _config;
 
-<PageTitle>@_config["AppShortName"] - Ausgabe bearbeiten</PageTitle>
+<PageTitle>@_config["AppShortName"] - Bankkonto bearbeiten</PageTitle>
 
 <div class="container-fluid border-bottom border-1 mb-3 px-0">
     <div class="row mx-0 mb-3">
         <div class="col p-0">
-            <h3 class="mb-1 mt-1">Ausgabe bearbeiten</h3>
+            <h3 class="mb-1 mt-1">Bankkonto bearbeiten</h3>
         </div>
     </div>
 </div>
@@ -28,10 +28,10 @@
             <p class="fs-4 text-danger">Kein Finanzplan ausgewählt!</p>
         </div>
     }
-    else if (_expense is null)
+    else if (_bankAccount is null)
     {
         <div class="row">
-            <p class="fs-4 text-danger">Ausgabe nicht ausgewählt oder ID nicht gefunden!</p>
+            <p class="fs-4 text-danger">Bankkonto nicht ausgewählt oder ID nicht gefunden!</p>
         </div>
     }
     else if (_showDeleteConfirmDialog)
@@ -45,7 +45,7 @@
         <div class="row">
             <div class="col">
 
-                <EditForm Model="@_expense" OnSubmit="HandleValidSubmitAsync" FormName="ExpenseForm">
+                <EditForm Model="@_bankAccount" OnSubmit="HandleValidSubmitAsync" FormName="BankAccountForm">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
@@ -65,7 +65,7 @@
                                             <label>ID:</label>
                                         </div>
                                         <div class="col">
-                                            <span>@_expense?.Id</span>
+                                            <span>@_bankAccount?.Id</span>
                                         </div>
                                     </div>
 
@@ -74,7 +74,7 @@
                                             <label>Name:</label>
                                         </div>
                                         <div class="col">
-                                            <InputText @bind-Value="@_expense!.Name" class="w-100" />
+                                            <InputText @bind-Value="@_bankAccount!.Name" class="w-100" />
                                         </div>
                                     </div>
 
@@ -83,16 +83,25 @@
                                             <label>Beschreibung:</label>
                                         </div>
                                         <div class="col">
-                                            <InputText @bind-Value="@_expense.Description" class="w-100" />
+                                            <InputText @bind-Value="@_bankAccount.Description" class="w-100" />
                                         </div>
                                     </div>
 
                                     <div class="row my-2">
                                         <div class="col-4">
-                                            <label>Betrag:</label>
+                                            <label>IBAN:</label>
                                         </div>
                                         <div class="col">
-                                            <InputText @bind-Value="@_expense.PriceString" class="w-100" />
+                                            <InputText @bind-Value="@_bankAccount.IBAN" class="w-100" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row my-2">
+                                        <div class="col-4">
+                                            <label>BIC:</label>
+                                        </div>
+                                        <div class="col">
+                                            <InputText @bind-Value="@_bankAccount.BIC" class="w-100" />
                                         </div>
                                     </div>
 
@@ -101,7 +110,7 @@
                                             <label>Erstellt am:</label>
                                         </div>
                                         <div class="col">
-                                            <span>@_expense.DateCreated.ToShortDateString() - @_expense.DateCreated.ToLongTimeString() Uhr</span>
+                                            <span>@_bankAccount.DateCreated.ToShortDateString() - @_bankAccount.DateCreated.ToLongTimeString() Uhr</span>
                                         </div>
                                     </div>
 
@@ -110,7 +119,7 @@
                                             <label>Zuletzt bearbeitet am:</label>
                                         </div>
                                         <div class="col">
-                                            <span>@_expense.DateModified.ToShortDateString() - @_expense.DateModified.ToLongTimeString() Uhr</span>
+                                            <span>@_bankAccount.DateModified.ToShortDateString() - @_bankAccount.DateModified.ToLongTimeString() Uhr</span>
                                         </div>
                                     </div>
                                 </div>
@@ -122,7 +131,7 @@
                     <div class="container my-2 mt-3 border-top border-1 px-0">
                         <div class="row mt-3 justify-content-end">
                             <div class="col-auto">
-                                <a href="/Expenses" class="btn btn-outline-secondary px-4">Abbrechen</a>
+                                <a href="/BankAccounts" class="btn btn-outline-secondary px-4">Abbrechen</a>
                             </div>
 
                             <div class="col-auto">
@@ -140,7 +149,7 @@
 
 @code {
     private FinancialPlanViewModel? _financialPlan = null;
-    private ExpenseEntryViewModel? _expense = null;
+    private BankAccountViewModel? _bankAccount = null;
     private bool _showDeleteConfirmDialog = false;
 
     [Parameter]
@@ -155,24 +164,24 @@
             throw new InvalidOperationException("Financial plan not found.");
         }
 
-        _expense = _financialPlan.Expenses.SingleOrDefault(x => x.Id == Id);
-        if (_expense is null)
+        _bankAccount = _financialPlan.BankAccounts.SingleOrDefault(x => x.Id == Id);
+        if (_bankAccount is null)
         {
-            throw new InvalidOperationException($"Expense with ID {Id} not found.");
+            throw new InvalidOperationException($"Bank account with ID {Id} not found.");
         }
     }
 
     private async Task HandleValidSubmitAsync()
     {
         if (_financialPlan is null
-        || _expense is null)
+        || _bankAccount is null)
         {
             return;
         }
 
-        _expense.DateModified = DateTime.Now;
-        await _db.CreateOrUpdateExpenseEntryAsync(_expense.ToExpenseEntryDTO());
-        _nav.NavigateTo($"/{nameof(Expenses)}");
+        _bankAccount.DateModified = DateTime.Now;
+        await _db.CreateOrUpdateBankAccountAsync(_bankAccount.ToBankAccountDTO());
+        _nav.NavigateTo($"/{nameof(BankAccounts)}");
     }
 
     private void OnDeleteButtonClick()

@@ -1,4 +1,4 @@
-﻿@page "/AddFinancialPlan"
+﻿@page "/AddBankAccount"
 @rendermode InteractiveServer
 
 @using System.Diagnostics
@@ -7,26 +7,25 @@
 @using SessionData
 
 @inject IEFCoreData _db;
+@inject NavigationManager _nav;
 @inject SessionData _session;
 @inject IConfiguration _config;
-@inject NavigationManager _nav;
 
-<PageTitle>@_config["AppShortName"] - Finanzplan hinzufügen</PageTitle>
+<PageTitle>@_config["AppShortName"] - Bankkonto hinzufügen</PageTitle>
 
 <div class="container-fluid border-bottom border-1 mb-3 px-0">
     <div class="row mx-0 mb-3">
         <div class="col p-0">
-            <h3 class="mb-1 mt-1">Neuen Finanzplan hinzufügen</h3>
+            <h3 class="mb-1 mt-1">Neues Bankkonto hinzufügen</h3>
         </div>
     </div>
 </div>
 
 <div class="container-fluid mb-4 px-0">
-
     <div class="row">
         <div class="col">
 
-            <EditForm Model="@_financialPlan" OnSubmit="HandleValidSubmitAsync" FormName="FinancialPlanForm">
+            <EditForm Model="@_bankAccount" OnSubmit="HandleValidSubmitAsync" FormName="BankAccountForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
@@ -42,7 +41,7 @@
                                         <label>Name:</label>
                                     </div>
                                     <div class="col">
-                                        <InputText @bind-Value="@_financialPlan!.Name" class="w-100" />
+                                        <InputText @bind-Value="@_bankAccount!.Name" class="w-100" />
                                     </div>
                                 </div>
 
@@ -51,10 +50,27 @@
                                         <label>Beschreibung:</label>
                                     </div>
                                     <div class="col">
-                                        <InputText @bind-Value="@_financialPlan!.Description" class="w-100" />
+                                        <InputText @bind-Value="@_bankAccount.Description" class="w-100" />
                                     </div>
                                 </div>
 
+                                <div class="row my-2">
+                                    <div class="col-4">
+                                        <label>IBAN:</label>
+                                    </div>
+                                    <div class="col">
+                                        <InputText @bind-Value="@_bankAccount.IBAN" class="w-100" />
+                                    </div>
+                                </div>
+
+                                <div class="row my-2">
+                                    <div class="col-4">
+                                        <label>BIC:</label>
+                                    </div>
+                                    <div class="col">
+                                        <InputText @bind-Value="@_bankAccount.BIC" class="w-100" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -64,8 +80,9 @@
                 <div class="container my-2 mt-3 border-top border-1 px-0">
                     <div class="row mt-3 justify-content-end">
                         <div class="col-auto">
-                            <a href="/" class="btn btn-outline-secondary px-4">Abbrechen</a>
+                            <a href="/BankAccounts" class="btn btn-outline-secondary px-4">Abbrechen</a>
                         </div>
+
                         <div class="col-auto">
                             <button type="submit" class="btn btn-outline-primary px-4">Speichern</button>
                         </div>
@@ -79,12 +96,25 @@
 
 @code {
     private FinancialPlanViewModel? _financialPlan = null;
+    private BankAccountViewModel? _bankAccount = null;
 
-    protected override void OnInitialized()
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-        _financialPlan = new()
+        _financialPlan = (await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId))?.ToFinancialPlanViewModel();
+
+        if (_financialPlan is null)
+        {
+            throw new InvalidOperationException("Financial plan not found.");
+        }
+
+        _bankAccount = new()
         {
             Name = string.Empty,
+            IBAN = string.Empty,
+            BIC = string.Empty,
             DateCreated = DateTime.Now,
             DateModified = DateTime.Now
         };
@@ -93,15 +123,23 @@
     private async Task HandleValidSubmitAsync()
     {
         if (_financialPlan is null
-        || string.IsNullOrWhiteSpace(_financialPlan.Name))
+        || _bankAccount is null
+        || string.IsNullOrWhiteSpace(_bankAccount.Name)
+        || string.IsNullOrWhiteSpace(_bankAccount.IBAN)
+        || string.IsNullOrWhiteSpace(_bankAccount.BIC)
+        )
         {
             return;
         }
 
-        _financialPlan.DateCreated = DateTime.Now;
+        _bankAccount.DateCreated = DateTime.Now;
+        _bankAccount.DateModified = DateTime.Now;
         _financialPlan.DateModified = DateTime.Now;
 
+        _financialPlan.BankAccounts.Add(_bankAccount);
         await _db.CreateOrUpdateFinancialPlanAsync(_financialPlan.ToFinancialPlanDTO());
-        _nav.NavigateTo($"/");
+        await _db.CreateOrUpdateBankAccountAsync(_bankAccount.ToBankAccountDTO());
+
+        _nav.NavigateTo($"/{nameof(BankAccounts)}");
     }
 }

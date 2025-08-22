@@ -129,10 +129,13 @@ public class EFCoreData : IEFCoreData
             {
                 var entriesToDelete = oldPlan.BankAccounts.Except(newPlan.BankAccounts)
                                                           .ToList();
+
                 entriesToDelete.ForEach(x => oldPlan.BankAccounts.Remove(x));
 
                 var entriesToAdd = newPlan.BankAccounts.Except(oldPlan.BankAccounts)
                                                        .ToList();
+
+
                 oldPlan.BankAccounts.AddRange(entriesToAdd);
             }
             else

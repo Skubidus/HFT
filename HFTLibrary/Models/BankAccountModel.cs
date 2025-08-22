@@ -19,4 +19,17 @@ public class BankAccountModel
     public string Description { get; set; } = string.Empty;
     public required DateTime DateCreated { get; set; }
     public required DateTime DateModified { get; set; }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null
+            || obj is not BankAccountModel)
+        {
+            return false;
+        }
+
+        var model = obj as BankAccountModel;
+
+        return model!.Id == this.Id;
+    }
 }

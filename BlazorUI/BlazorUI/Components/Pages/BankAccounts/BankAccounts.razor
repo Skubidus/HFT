@@ -19,7 +19,7 @@
         </div>
 
         <div class="col-auto p-0 text-end">
-            <div class="col-auto bi bi-plus-lg btn btn-outline-secondary py-2" title="Neues Bankkonto hinzufügen" @onclick="OnAddBankAccountButtonClick" />
+            <a href="/@nameof(AddBankAccount)" class="col-auto bi bi-plus-lg btn btn-outline-secondary py-2" title="Neues Bankkonto hinzufügen"></a>
         </div>
     </div>
 </div>
@@ -39,12 +39,6 @@
     }
     else
     {
-        @*         <div class="row mx-0 justify-content-end mb-3">
-            <div class="col-auto p-0">
-                <div class="col-auto bi bi-plus-lg btn btn-outline-secondary py-2" title="Neues Bankkonto hinzufügen" @onclick="OnAddBankAccountButtonClick" />
-            </div>
-        </div> *@
-
         <div class="row">
             <div class="col">
 
@@ -114,12 +108,6 @@
                     <div class="card-footer">
                         <div class="row fw-bold">
                             &nbsp;
-                            @*                             <div class="col-3 offset-6 text-end">
-                                <label>Summe:</label>
-                            </div>
-                            <div class="col-3">
-                                <label>@_financialPlan.Expenses.Sum(x => x.Price).ToString("N2") €</label>
-                            </div> *@
                         </div>
                     </div>
 
@@ -139,13 +127,8 @@
         _financialPlan = (await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId))?.ToFinancialPlanViewModel();
     }
 
-    private void OnModifyBankAccountButtonClick(int expenseId)
+    private void OnModifyBankAccountButtonClick(int id)
     {
-        _nav.NavigateTo($"/ModifyBankAccount/{expenseId}");
-    }
-
-    private void OnAddBankAccountButtonClick()
-    {
-
+        _nav.NavigateTo($"/ModifyBankAccount/{id}");
     }
 }
