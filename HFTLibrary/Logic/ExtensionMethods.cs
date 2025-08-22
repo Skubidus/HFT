@@ -78,7 +78,7 @@ public static class ExtensionMethods
         return new BankAccountDTO
         {
             Id = model.Id,
-            Name = model.Name,
+            BankName = model.BankName,
             Description = model.Description,
 
             IBAN = model.IBAN,
@@ -94,7 +94,7 @@ public static class ExtensionMethods
         return new BankAccountModel
         {
             Id = dto.Id,
-            Name = dto.Name,
+            BankName = dto.BankName,
             Description = dto.Description,
 
             IBAN = dto.IBAN,

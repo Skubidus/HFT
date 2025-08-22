@@ -336,7 +336,7 @@ public class EFCoreData : IEFCoreData
             return false;
         }
 
-        oldAccount.Name = dto.Name;
+        oldAccount.BankName = dto.BankName;
         oldAccount.Description = dto.Description;
 
         oldAccount.IBAN = dto.IBAN;

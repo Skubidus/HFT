@@ -13,7 +13,7 @@ public static class ExtensionMethods
         return new BankAccountViewModel
         {
             Id = dto.Id,
-            Name = dto.Name,
+            Name = dto.BankName,
             Description = dto.Description,
             IBAN = dto.IBAN,
             BIC = dto.BIC,
@@ -27,7 +27,7 @@ public static class ExtensionMethods
         return new BankAccountDTO
         {
             Id = model.Id,
-            Name = model.Name,
+            BankName = model.Name,
             Description = model.Description,
             IBAN = model.IBAN,
             BIC = model.BIC,

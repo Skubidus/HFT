@@ -12,7 +12,7 @@ public class TestData
         [
             new BankAccountModel
             {
-                Name = "Bank Account 1",
+                BankName = "Bank Account 1",
                 Description = "Bank Account 1 Test",
                 IBAN = "DE12500105170648489890",
                 BIC = "50010517",
@@ -22,7 +22,7 @@ public class TestData
 
             new BankAccountModel
             {
-                Name = "Bank Account 2",
+                BankName = "Bank Account 2",
                 Description = "Bank Account 2 Test",
                 IBAN = "DE12500105170648489785",
                 BIC = "50010555",
@@ -146,7 +146,7 @@ public class TestData
         [
             new BankAccountModel
             {
-                Name = "Bank Account 11",
+                BankName = "Bank Account 11",
                 Description = "Bank Account 11 Test",
                 IBAN = "DE12500105170648489890",
                 BIC = "50010517",
@@ -156,7 +156,7 @@ public class TestData
 
             new BankAccountModel
             {
-                Name = "Bank Account 12",
+                BankName = "Bank Account 12",
                 Description = "Bank Account 12 Test",
                 IBAN = "DE12500105170648489785",
                 BIC = "50010555",
@@ -280,7 +280,7 @@ public class TestData
         [
             new BankAccountModel
             {
-                Name = "Bank Account 21",
+                BankName = "Bank Account 21",
                 Description = "Bank Account 21 Test",
                 IBAN = "DE12500105170648489890",
                 BIC = "50010517",
@@ -290,7 +290,7 @@ public class TestData
 
             new BankAccountModel
             {
-                Name = "Bank Account 22",
+                BankName = "Bank Account 22",
                 Description = "Bank Account 22 Test",
                 IBAN = "DE12500105170648489785",
                 BIC = "50010555",

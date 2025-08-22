@@ -6,7 +6,10 @@ public record BankAccountDTO
     public int Id { get; init; }
 
     [StringLength(100)]
-    public required string Name { get; init; }
+    public required string BankName { get; init; }
+
+    [StringLength(500)]
+    public string Description { get; init; } = string.Empty;
 
     [StringLength(50)]
     public required string IBAN { get; init; }
@@ -14,8 +17,6 @@ public record BankAccountDTO
     [StringLength(20)]
     public required string BIC { get; init; }
 
-    [StringLength(500)]
-    public string Description { get; init; } = string.Empty;
     public required DateTime DateCreated { get; init; }
     public required DateTime DateModified { get; init; }
 }
