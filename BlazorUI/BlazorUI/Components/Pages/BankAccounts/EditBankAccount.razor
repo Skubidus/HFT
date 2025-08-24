@@ -1,4 +1,4 @@
-﻿@page "/ModifyBankAccount/{Id:int}"
+﻿@page "/EditBankAccount/{Id:int}"
 @rendermode InteractiveServer
 
 @using System.Diagnostics
@@ -22,7 +22,7 @@
 </div>
 
 <div class="container-fluid mb-4 px-0">
-    @if (_financialPlan is null)
+    @if (_session.SelectedFinancialPlanId <= 0)
     {
         <div class="row">
             <p class="fs-4 text-danger">Kein Finanzplan ausgewählt!</p>
@@ -37,7 +37,9 @@
     else if (_showDeleteConfirmDialog)
     {
         <div class="row">
-            <p class="fs-4 text-danger">TODO: Lösch-Dialog für Ausgaben!</p>
+            <div class="col">
+                <DeleteBankAccount OnDialogClosed="OnDialogClosed" Id="_bankAccount.Id" />
+            </div>
         </div>
     }
     else
@@ -54,7 +56,7 @@
                         <div class="card-body py-0">
 
                             <div class="row justify-content-end mt-2 pe-1">
-                                <div class="col-auto bi bi-trash btn btn-outline-danger py-2 mt-1 me-2" title="Ausgabe löschen" @onclick="OnDeleteButtonClick" />
+                                <div class="col-auto bi bi-trash btn btn-outline-danger py-2 mt-1 me-2" title="Bankkonto löschen" @onclick="OnDeleteButtonClick" />
                             </div>
 
                             <div class="row">
@@ -74,7 +76,7 @@
                                             <label>Bank:</label>
                                         </div>
                                         <div class="col">
-                                            <InputText @bind-Value="@_bankAccount!.Name" class="w-100" />
+                                            <InputText @bind-Value="@_bankAccount!.BankName" class="w-100" />
                                         </div>
                                     </div>
 
@@ -180,7 +182,7 @@
         }
 
         _bankAccount.DateModified = DateTime.Now;
-        await _db.CreateOrUpdateBankAccountAsync(_bankAccount.ToBankAccountDTO());
+        await _db.UpdateBankAccountAsync(_bankAccount.ToBankAccountDTO());
         _nav.NavigateTo($"/{nameof(BankAccounts)}");
     }
 
@@ -189,7 +191,7 @@
         _showDeleteConfirmDialog = true;
     }
 
-    private void HandleDialogClosed()
+    private void OnDialogClosed()
     {
         _showDeleteConfirmDialog = false;
         StateHasChanged();

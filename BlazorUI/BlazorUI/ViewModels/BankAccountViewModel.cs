@@ -7,8 +7,7 @@ public class BankAccountViewModel
     public int Id { get; init; }
 
     [StringLength(100)]
-    public required string Name { get; set; }
-
+    public required string BankName { get; set; }
 
     private string _iban = string.Empty;
     [StringLength(50)]

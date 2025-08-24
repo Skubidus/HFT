@@ -15,7 +15,9 @@ public interface IEFCoreData
     // BankAccount
     Task<BankAccountDTO?> GetBankAccountAsync(int id);
     Task<List<BankAccountDTO>> GetBankAccountListAsync();
-    Task<bool> CreateOrUpdateBankAccountAsync(BankAccountDTO dto);
+    //Task<bool> CreateOrUpdateBankAccountAsync(BankAccountDTO dto);
+    Task<bool> CreateBankAccountAsync(BankAccountDTO dto, int financialPlanId);
+    Task<bool> UpdateBankAccountAsync(BankAccountDTO dto);
     Task<bool> DeleteBankAccountAsync(int id);
 
     // ExpenseEntry

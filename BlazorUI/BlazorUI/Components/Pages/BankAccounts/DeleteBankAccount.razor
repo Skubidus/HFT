@@ -1,0 +1,82 @@
+﻿@using HFTLibrary.Data
+@using HFTLibrary.Models
+@using HFTLibrary.DTOs
+@using HFTLibrary.Logic
+@using SessionData
+
+@inject IEFCoreData _db;
+@inject SessionData _session;
+@inject NavigationManager _nav;
+
+<div class="card bg-danger">
+    <div class="card-body text-white">
+
+        <h5 class="card-title border-bottom border-2 border-warning">Löschung bestätigen!</h5>
+
+        <div class="row">
+            <div class="col">
+                <label>Möchten Sie das folgende Bankkonto wirklich vollständig löschen?</label>
+            </div>
+        </div>
+
+        <div class="row bg-info text-black my-2 gx-1 px-1 rounded">
+            <label>Nane: @_bankAccount?.BankName</label>
+            <label>Beschreibung: @_bankAccount?.Description</label>
+        </div>
+
+        <div class="row">
+            <label>ACHTUNG: Alle Ausgaben, denen dieses Bankkonto zugeordnet ist, werden nach der Löschung keinem Bankkonto mehr zugeordnet sein!</label>
+        </div>
+
+        <div class="row mt-3 justify-content-end">
+            <div class="col-auto">
+                <a href="/BankAccounts" class="btn btn-outline-secondary px-4" @onclick="@(() => HandleButtonClickAsync(false))">Abbrechen</a>
+            </div>
+
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-primary px-4" @onclick="@(() => HandleButtonClickAsync(true))">Löschen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private BankAccountDTO? _bankAccount;
+
+    [Parameter]
+    public EventCallback<bool> OnDialogClosed { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _bankAccount = await _db.GetBankAccountAsync(Id);
+    }
+
+    private async Task HandleButtonClickAsync(bool doDelete)
+    {
+        await OnDialogClosed.InvokeAsync(true);
+
+        if (doDelete == false)
+        {
+            _nav.NavigateTo($"/{nameof(EditBankAccount)}/{Id}");
+            return;
+        }
+
+        var financialPlan = (await _db.GetFinancialPlanAsync(_session.SelectedFinancialPlanId))?.ToFinancialPlanViewModel();
+
+        if (financialPlan is null || _bankAccount is null)
+        {
+            return;
+        }
+
+        // financialPlan.DateModified = DateTime.Now;
+        // financialPlan.BankAccounts.RemoveAll(x => x.Id == _bankAccount.Id);
+
+        await _db.DeleteBankAccountAsync(_bankAccount.Id);
+
+        _nav.NavigateTo($"/{nameof(BankAccounts)}");
+    }
+}

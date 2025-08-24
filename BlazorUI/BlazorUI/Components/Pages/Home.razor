@@ -71,13 +71,13 @@
                             {
                                 rowClass = "row align-items-center py-1 link-primary";
                             }
-                            <div class="@rowClass" role="button" onclick="@(() => HandleClick(plan.Id))">
+                            <div class="@rowClass" role="button" onclick="@(() => HandleClick(plan))">
                                 <div class="col-1">
-                                    <label role="button" onclick="@(() => HandleClick(plan.Id))">@(i + 1)</label>
+                                    <label role="button" onclick="@(() => HandleClick(plan))">@(i + 1)</label>
                                 </div>
 
                                 <div class="col">
-                                    <label role="button" onclick="@(() => HandleClick(plan.Id))">@plan.Name</label>
+                                    <label role="button" onclick="@(() => HandleClick(plan))">@plan.Name</label>
                                 </div>
                             </div>
                         }
@@ -100,9 +100,10 @@
         await base.OnInitializedAsync();
     }
 
-    private void HandleClick(int id)
+    private void HandleClick(FinancialPlanLazyViewModel plan)
     {
-        _session.SelectedFinancialPlanId = id;
+        _session.SelectedFinancialPlanId = plan.Id;
+        _session.SelectedFinancialPlanName = plan.Name;
         _nav.NavigateTo($"/{nameof(EditFinancialPlan)}");
     }
 }

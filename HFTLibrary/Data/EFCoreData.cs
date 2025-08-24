@@ -4,6 +4,8 @@ using HFTLibrary.Logic;
 
 using Microsoft.EntityFrameworkCore;
 
+using System.Security.Principal;
+
 namespace HFTLibrary.Data;
 
 /// <summary>
@@ -184,94 +186,98 @@ public class EFCoreData : IEFCoreData
         oldPlan.Description = newPlan.Description;
         oldPlan.DateModified = DateTime.Now;
 
-        if (oldPlan.BankAccounts.Count > 0)
-        {
-            if (newPlan.BankAccounts.Count > 0)
-            {
-                var entriesToDelete = oldPlan.BankAccounts.Except(newPlan.BankAccounts).ToList();
-                entriesToDelete.ForEach(x => oldPlan.BankAccounts.Remove(x));
+        //if (oldPlan.BankAccounts.Count > 0)
+        //{
+        //    if (newPlan.BankAccounts.Count > 0)
+        //    {
+        //        var entriesToDelete = oldPlan.BankAccounts.Except(newPlan.BankAccounts).ToList();
+        //        //entriesToDelete.ForEach(x => oldPlan.BankAccounts.Remove(x));
 
-                var entriesToAdd = newPlan.BankAccounts.Except(oldPlan.BankAccounts).ToList();
-                oldPlan.BankAccounts.AddRange(entriesToAdd);
-            }
-            else
-            {
-                oldPlan.BankAccounts.Clear();
-            }
-        }
-        else
-        {
-            if (newPlan.BankAccounts.Count > 0)
-            {
-                oldPlan.BankAccounts.AddRange(newPlan.BankAccounts);
-            }
-        }
+        //        entriesToDelete.ForEach(x => oldPlan.BankAccounts.Remove(x));
+        //        entriesToDelete.ForEach(async x => await DeleteBankAccountAsync(x.Id));
+        //        //_db.BankAccounts.RemoveRange(entriesToDelete);
 
-        if (oldPlan.Expenses!.Count > 0)
-        {
-            if (newPlan.Expenses.Count > 0)
-            {
-                var entriesToDelete = oldPlan.Expenses.Except(newPlan.Expenses).ToList();
-                entriesToDelete.ForEach(x => oldPlan.Expenses.Remove(x));
+        //        var entriesToAdd = newPlan.BankAccounts.Except(oldPlan.BankAccounts).ToList();
+        //        oldPlan.BankAccounts.AddRange(entriesToAdd);
+        //    }
+        //    else
+        //    {
+        //        oldPlan.BankAccounts.Clear();
+        //    }
+        //}
+        //else
+        //{
+        //    if (newPlan.BankAccounts.Count > 0)
+        //    {
+        //        oldPlan.BankAccounts.AddRange(newPlan.BankAccounts);
+        //    }
+        //}
 
-                var entriesToAdd = newPlan.Expenses.Except(oldPlan.Expenses).ToList();
-                oldPlan.Expenses.AddRange(entriesToAdd);
-            }
-            else
-            {
-                oldPlan.Expenses.Clear();
-            }
-        }
-        else
-        {
-            if (newPlan.Expenses.Count > 0)
-            {
-                oldPlan.Expenses.AddRange(newPlan.Expenses);
-            }
-        }
+        //if (oldPlan.Expenses!.Count > 0)
+        //{
+        //    if (newPlan.Expenses.Count > 0)
+        //    {
+        //        var entriesToDelete = oldPlan.Expenses.Except(newPlan.Expenses).ToList();
+        //        entriesToDelete.ForEach(x => oldPlan.Expenses.Remove(x));
 
-        if (oldPlan.Incomes!.Count > 0)
-        {
-            if (newPlan.Incomes.Count > 0)
-            {
-                var entriesToDelete = oldPlan.Incomes.Except(newPlan.Incomes).ToList();
-                entriesToDelete.ForEach(x => oldPlan.Incomes.Remove(x));
+        //        var entriesToAdd = newPlan.Expenses.Except(oldPlan.Expenses).ToList();
+        //        oldPlan.Expenses.AddRange(entriesToAdd);
+        //    }
+        //    else
+        //    {
+        //        oldPlan.Expenses.Clear();
+        //    }
+        //}
+        //else
+        //{
+        //    if (newPlan.Expenses.Count > 0)
+        //    {
+        //        oldPlan.Expenses.AddRange(newPlan.Expenses);
+        //    }
+        //}
 
-                var entriesToAdd = newPlan.Incomes.Except(oldPlan.Incomes).ToList();
-                oldPlan.Incomes.AddRange(entriesToAdd);
-            }
-            else
-            {
-                oldPlan.Incomes.Clear();
-            }
-        }
-        else
-        {
-            if (newPlan.Incomes.Count > 0)
-            {
-                oldPlan.Incomes.AddRange(newPlan.Incomes);
-            }
-        }
+        //if (oldPlan.Incomes!.Count > 0)
+        //{
+        //    if (newPlan.Incomes.Count > 0)
+        //    {
+        //        var entriesToDelete = oldPlan.Incomes.Except(newPlan.Incomes).ToList();
+        //        entriesToDelete.ForEach(x => oldPlan.Incomes.Remove(x));
 
-        if (oldPlan.SavingsPlan is not null)
-        {
-            if (newPlan.SavingsPlan is null)
-            {
-                _db.Entry(oldPlan.SavingsPlan).State = EntityState.Detached;
-                oldPlan.SavingsPlan = null;
-            }
-            else
-            {
-                oldPlan.SavingsPlan = newPlan.SavingsPlan;
-            }
-        }
-        else
-        {
-            if (newPlan.SavingsPlan is not null)
-            {
-                oldPlan.SavingsPlan = newPlan.SavingsPlan;
-            }
-        }
+        //        var entriesToAdd = newPlan.Incomes.Except(oldPlan.Incomes).ToList();
+        //        oldPlan.Incomes.AddRange(entriesToAdd);
+        //    }
+        //    else
+        //    {
+        //        oldPlan.Incomes.Clear();
+        //    }
+        //}
+        //else
+        //{
+        //    if (newPlan.Incomes.Count > 0)
+        //    {
+        //        oldPlan.Incomes.AddRange(newPlan.Incomes);
+        //    }
+        //}
+
+        //if (oldPlan.SavingsPlan is not null)
+        //{
+        //    if (newPlan.SavingsPlan is null)
+        //    {
+        //        _db.Entry(oldPlan.SavingsPlan).State = EntityState.Detached;
+        //        oldPlan.SavingsPlan = null;
+        //    }
+        //    else
+        //    {
+        //        oldPlan.SavingsPlan = newPlan.SavingsPlan;
+        //    }
+        //}
+        //else
+        //{
+        //    if (newPlan.SavingsPlan is not null)
+        //    {
+        //        oldPlan.SavingsPlan = newPlan.SavingsPlan;
+        //    }
+        //}
 
         using var transaction = await _db.Database.BeginTransactionAsync();
         try
@@ -321,6 +327,11 @@ public class EFCoreData : IEFCoreData
             _db.ExpenseEntries.RemoveRange(plan.Expenses);
             _db.IncomeEntries.RemoveRange(plan.Incomes);
 
+            if (plan.SavingsPlan is not null)
+            {
+                await DeleteSavingsPlanAsync(plan.SavingsPlan.Id);
+            }
+
             _db.FinancialPlans.Remove(plan);
 
             await _db.SaveChangesAsync();
@@ -368,43 +379,52 @@ public class EFCoreData : IEFCoreData
         return output;
     }
 
+    ///// <summary>
+    ///// Creates or updates a bank account based on the provided DTO.
+    ///// </summary>
+    ///// <param name="dto">The <see cref="BankAccountDTO"/> containing the bank account data.</param>
+    ///// <returns>True if the operation is successful, false otherwise.</returns>
+    ///// <exception cref="ArgumentNullException">Thrown when <paramref name="dto"/> is null.</exception>
+    //public async Task<bool> CreateOrUpdateBankAccountAsync(BankAccountDTO dto, int financialPlanId)
+    //{
+    //    ArgumentNullException.ThrowIfNull(dto);
+    //    ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(financialPlanId, 0);
+
+    //    var isNewAccount = await _db.BankAccounts.FindAsync(dto.Id) is null;
+
+    //    return isNewAccount ? await CreateBankAccountAsync(dto, financialPlanId)
+    //                        : await UpdateBankAccountAsync(dto);
+    //}
+
     /// <summary>
-    /// Creates or updates a bank account based on the provided DTO.
+    /// Creates a new bank account and associates it with the specified financial plan.
     /// </summary>
     /// <param name="dto">The <see cref="BankAccountDTO"/> containing the bank account data.</param>
-    /// <returns>True if the operation is successful, false otherwise.</returns>
+    /// <param name="financialPlanId">The ID of the <see cref="FinancialPlanModel"/> to which the bank account will be associated.</param>
+    /// <returns>True if the creation and association are successful, false if an error occurs.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="dto"/> is null.</exception>
-    public async Task<bool> CreateOrUpdateBankAccountAsync(BankAccountDTO dto)
-    {
-        ArgumentNullException.ThrowIfNull(dto);
-
-        var isNewAccount = await _db.BankAccounts.FindAsync(dto.Id) is null;
-
-        return isNewAccount ? await CreateBankAccountAsync(dto)
-                            : await UpdateBankAccountAsync(dto);
-    }
-
-    /// <summary>
-    /// Creates a new bank account from the provided DTO.
-    /// </summary>
-    /// <param name="dto">The <see cref="BankAccountDTO"/> containing the bank account data.</param>
-    /// <returns>True if the creation is successful, false if an error occurs.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="dto"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="financialPlanId"/> is less than or equal to zero.</exception>
     /// <exception cref="Exception">Thrown when a general error occurs during the database operation.</exception>
-    private async Task<bool> CreateBankAccountAsync(BankAccountDTO dto)
+    public async Task<bool> CreateBankAccountAsync(BankAccountDTO dto, int financialPlanId)
     {
         ArgumentNullException.ThrowIfNull(dto);
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(financialPlanId, 0);
 
-        var model = dto.ToBankAccountModel();
+        var bankAccountModel = dto.ToBankAccountModel();
 
-        model.DateCreated = DateTime.Now;
-        model.DateModified = DateTime.Now;
+        bankAccountModel.DateCreated = DateTime.Now;
+        bankAccountModel.DateModified = DateTime.Now;
+
+        var financialPlan = await _db.FinancialPlans
+            .Include(x => x.BankAccounts)
+            .FirstAsync(x => x.Id == financialPlanId);
+
+        financialPlan.BankAccounts.Add(bankAccountModel);
+        financialPlan.DateModified = DateTime.Now;
 
         using var transaction = await _db.Database.BeginTransactionAsync();
         try
         {
-            _db.BankAccounts.Add(model);
-
             await _db.SaveChangesAsync();
             await transaction.CommitAsync();
 
@@ -424,7 +444,7 @@ public class EFCoreData : IEFCoreData
     /// <returns>True if the update is successful, false if the account is not found or an error occurs.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="dto"/> is null.</exception>
     /// <exception cref="Exception">Thrown when a general error occurs during the database operation.</exception>
-    private async Task<bool> UpdateBankAccountAsync(BankAccountDTO dto)
+    public async Task<bool> UpdateBankAccountAsync(BankAccountDTO dto)
     {
         ArgumentNullException.ThrowIfNull(dto);
 
@@ -438,10 +458,8 @@ public class EFCoreData : IEFCoreData
 
         oldAccount.BankName = dto.BankName;
         oldAccount.Description = dto.Description;
-
         oldAccount.IBAN = dto.IBAN;
         oldAccount.BIC = dto.BIC;
-
         oldAccount.DateModified = DateTime.Now;
 
         return await _db.SaveChangesAsync() > 0;
@@ -467,6 +485,13 @@ public class EFCoreData : IEFCoreData
         using var transaction = await _db.Database.BeginTransactionAsync();
         try
         {
+            var expenses = await _db.ExpenseEntries.Where((x) => x.AssociatedBankAccount != null &&
+                                                                 x.AssociatedBankAccount.Id == account.Id)
+                                                                 .ToListAsync();
+
+            // TODO: needs to be checked in DB if this actually works.
+            expenses.ForEach(x => x.AssociatedBankAccount = null);
+
             _db.BankAccounts.Remove(account);
 
             await _db.SaveChangesAsync();
@@ -594,10 +619,8 @@ public class EFCoreData : IEFCoreData
 
         oldEntry.Name = newEntry.Name;
         oldEntry.Description = newEntry.Description;
-
         oldEntry.Price = newEntry.Price;
-
-        newEntry.DateModified = DateTime.Now;
+        oldEntry.DateModified = DateTime.Now;
 
         using var transaction = await _db.Database.BeginTransactionAsync();
         try
@@ -606,12 +629,12 @@ public class EFCoreData : IEFCoreData
             {
                 if (newEntry.AssociatedBankAccount is null)
                 {
-                    _db.Entry(oldEntry.AssociatedBankAccount).State = EntityState.Detached;
+                    //_db.Entry(oldEntry.AssociatedBankAccount).State = EntityState.Detached;
                     oldEntry.AssociatedBankAccount = null;
                 }
                 else if (newEntry.AssociatedBankAccount.Id != oldEntry.AssociatedBankAccount.Id)
                 {
-                    _db.Entry(oldEntry.AssociatedBankAccount).State = EntityState.Detached;
+                    //_db.Entry(oldEntry.AssociatedBankAccount).State = EntityState.Detached;
                     oldEntry.AssociatedBankAccount = newEntry.AssociatedBankAccount;
                 }
             }
@@ -773,10 +796,8 @@ public class EFCoreData : IEFCoreData
 
         oldEntry.Name = newEntry.Name;
         oldEntry.Description = newEntry.Description;
-
         oldEntry.TotalAmount = newEntry.TotalAmount;
-
-        newEntry.DateModified = DateTime.Now;
+        oldEntry.DateModified = DateTime.Now;
 
         using var transaction = await _db.Database.BeginTransactionAsync();
         try
@@ -931,10 +952,8 @@ public class EFCoreData : IEFCoreData
 
         oldEntry.Name = newEntry.Name;
         oldEntry.Description = newEntry.Description;
-
         oldEntry.Price = newEntry.Price;
-
-        newEntry.DateModified = DateTime.Now;
+        oldEntry.DateModified = DateTime.Now;
 
         using var transaction = await _db.Database.BeginTransactionAsync();
         try
@@ -1153,19 +1172,22 @@ public class EFCoreData : IEFCoreData
         using var transaction = await _db.Database.BeginTransactionAsync();
         try
         {
-            var plan = await _db.SavingsPlans
+            var savingsPlan = await _db.SavingsPlans
                 .Include(s => s.SavingsEntries)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
-            if (plan is null)
+            if (savingsPlan is null)
             {
                 await transaction.RollbackAsync();
                 return false;
             }
 
-            _db.SavingsEntries.RemoveRange(plan.SavingsEntries);
+            var financialPlan = await _db.FinancialPlans.SingleOrDefaultAsync((x) => x.SavingsPlan != null &&
+                                                                                     x.SavingsPlan.Id == savingsPlan.Id);
+            financialPlan!.SavingsPlan = null;
 
-            _db.SavingsPlans.Remove(plan);
+            _db.SavingsEntries.RemoveRange(savingsPlan.SavingsEntries);
+            _db.SavingsPlans.Remove(savingsPlan);
 
             await _db.SaveChangesAsync();
             await transaction.CommitAsync();

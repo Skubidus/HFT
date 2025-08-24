@@ -129,6 +129,6 @@
 
     private void OnModifyBankAccountButtonClick(int id)
     {
-        _nav.NavigateTo($"/ModifyBankAccount/{id}");
+        _nav.NavigateTo($"/{nameof(EditBankAccount)}/{id}");
     }
 }

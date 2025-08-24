@@ -41,7 +41,7 @@
                                         <label>Bank:</label>
                                     </div>
                                     <div class="col">
-                                        <InputText @bind-Value="@_bankAccount!.Name" class="w-100" />
+                                        <InputText @bind-Value="@_bankAccount!.BankName" class="w-100" />
                                     </div>
                                 </div>
 
@@ -112,7 +112,7 @@
 
         _bankAccount = new()
         {
-            Name = string.Empty,
+            BankName = string.Empty,
             IBAN = string.Empty,
             BIC = string.Empty,
             DateCreated = DateTime.Now,
@@ -124,7 +124,7 @@
     {
         if (_financialPlan is null
         || _bankAccount is null
-        || string.IsNullOrWhiteSpace(_bankAccount.Name)
+        || string.IsNullOrWhiteSpace(_bankAccount.BankName)
         || string.IsNullOrWhiteSpace(_bankAccount.IBAN)
         || string.IsNullOrWhiteSpace(_bankAccount.BIC)
         )
@@ -132,13 +132,7 @@
             return;
         }
 
-        _bankAccount.DateCreated = DateTime.Now;
-        _bankAccount.DateModified = DateTime.Now;
-        _financialPlan.DateModified = DateTime.Now;
-
-        _financialPlan.BankAccounts.Add(_bankAccount);
-        await _db.CreateOrUpdateFinancialPlanAsync(_financialPlan.ToFinancialPlanDTO());
-        await _db.CreateOrUpdateBankAccountAsync(_bankAccount.ToBankAccountDTO());
+        await _db.CreateBankAccountAsync(_bankAccount.ToBankAccountDTO(), _financialPlan.Id);
 
         _nav.NavigateTo($"/{nameof(BankAccounts)}");
     }
